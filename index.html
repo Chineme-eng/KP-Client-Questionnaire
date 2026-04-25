@@ -1,0 +1,1139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Client Website Questionnaire</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet"/>
+<style>
+/* ═══════════════════════════════════════════
+   CSS VARIABLES — edit to restyle everything
+═══════════════════════════════════════════ */
+:root {
+  --bg:           #ffffff;
+  --surface:      #f8f8f6;
+  --border:       #e3e3dc;
+  --accent:       #1a1a1a;
+  --accent-light: #4a4a4a;
+  --muted:        #9a9a94;
+  --highlight:    #c9963a;
+  --highlight-bg: #fdf7ed;
+  --error:        #b91c1c;
+  --success:      #15803d;
+  --radius:       14px;
+  --radius-sm:    8px;
+  --font-display: 'DM Serif Display', Georgia, serif;
+  --font-body:    'DM Sans', system-ui, sans-serif;
+  --ease:         cubic-bezier(0.4, 0, 0.2, 1);
+  --speed:        0.32s;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; }
+
+body {
+  background: var(--bg);
+  color: var(--accent);
+  font-family: var(--font-body);
+  line-height: 1.65;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow-x: hidden;
+}
+
+/* ── HEADER ── */
+header {
+  width: 100%;
+  border-bottom: 1px solid var(--border);
+  padding: 22px 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  background: rgba(255,255,255,0.96);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 50;
+}
+
+.logo { font-family: var(--font-display); font-size: 1.2rem; letter-spacing: -0.01em; }
+.logo span { color: var(--highlight); }
+
+.header-right { display: flex; flex-direction: column; align-items: flex-end; gap: 5px; }
+
+.section-badge {
+  font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.1em;
+  color: var(--highlight); font-weight: 600;
+}
+
+.progress-row { display: flex; align-items: center; gap: 10px; }
+.progress-label { font-size: 0.75rem; color: var(--muted); font-weight: 500; white-space: nowrap; }
+.progress-track { width: 120px; height: 3px; background: var(--border); border-radius: 99px; overflow: hidden; }
+.progress-fill {
+  height: 100%; background: var(--highlight); border-radius: 99px;
+  transition: width 0.5s var(--ease); width: 0%;
+}
+
+/* ── MAIN ── */
+main { width: 100%; max-width: 660px; padding: 56px 24px 140px; flex: 1; }
+
+/* ── INTRO ── */
+.intro { margin-bottom: 56px; animation: fadeUp 0.6s var(--ease) both; }
+.intro-eyebrow {
+  font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.12em;
+  color: var(--highlight); font-weight: 600; margin-bottom: 14px;
+}
+.intro h1 {
+  font-family: var(--font-display); font-size: 2.6rem;
+  line-height: 1.12; letter-spacing: -0.02em; margin-bottom: 18px;
+}
+.intro p { color: var(--accent-light); font-size: 1.02rem; max-width: 500px; line-height: 1.72; }
+
+/* ── QUESTION CARD ── */
+.question-card { display: none; flex-direction: column; gap: 20px; }
+.question-card.active { display: flex; animation: slideIn 0.38s var(--ease) both; }
+.question-card.going-back.active { animation: slideInBack 0.38s var(--ease) both; }
+
+.q-meta { display: flex; align-items: center; justify-content: space-between; }
+.q-number { font-size: 0.75rem; color: var(--muted); font-style: italic; font-family: var(--font-display); }
+.q-section-tag {
+  font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em;
+  color: var(--muted); font-weight: 600; background: var(--surface);
+  border: 1px solid var(--border); border-radius: 99px; padding: 3px 10px;
+}
+
+.question-text {
+  font-family: var(--font-display); font-size: 1.55rem;
+  line-height: 1.22; letter-spacing: -0.01em; color: var(--accent);
+}
+.question-hint { font-size: 0.87rem; color: var(--muted); line-height: 1.55; margin-top: -8px; }
+.required { color: var(--highlight); margin-left: 2px; }
+
+/* ── INPUTS ── */
+input[type="text"], input[type="email"], input[type="url"], input[type="tel"], textarea, select {
+  width: 100%;
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 13px 16px;
+  font-family: var(--font-body);
+  font-size: 0.97rem;
+  color: var(--accent);
+  transition: border-color var(--speed) var(--ease), box-shadow var(--speed) var(--ease), background var(--speed) var(--ease);
+  outline: none;
+  -webkit-appearance: none;
+}
+input:focus, textarea:focus, select:focus {
+  border-color: var(--highlight);
+  background: var(--highlight-bg);
+  box-shadow: 0 0 0 3px rgba(201,150,58,0.15);
+}
+textarea { resize: vertical; min-height: 110px; line-height: 1.6; }
+
+/* ── CHAR COUNTER ── */
+.char-wrap { position: relative; }
+.char-counter {
+  position: absolute; bottom: 10px; right: 14px;
+  font-size: 0.72rem; color: var(--muted); pointer-events: none; transition: color 0.2s;
+}
+.char-counter.warn { color: var(--error); }
+
+/* ── CUSTOM SELECT ── */
+.custom-select-wrap { position: relative; }
+.custom-select-wrap select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%239a9a94' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  padding-right: 38px;
+  cursor: pointer;
+}
+.other-input-wrap { overflow: hidden; max-height: 0; opacity: 0; transition: max-height 0.35s var(--ease), opacity 0.25s; }
+.other-input-wrap.open { max-height: 80px; opacity: 1; }
+.other-input-wrap input { margin-top: 8px; }
+
+/* ── CHECKBOXES / RADIOS ── */
+.options-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 9px; }
+.option-label {
+  display: flex; align-items: center; gap: 10px;
+  padding: 11px 14px;
+  background: var(--surface); border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm); cursor: pointer; font-size: 0.91rem;
+  transition: border-color var(--speed) var(--ease), background var(--speed) var(--ease);
+  user-select: none;
+}
+.option-label:hover { border-color: var(--highlight); background: var(--highlight-bg); }
+.option-label input { display: none; }
+.option-label:has(input:checked) { border-color: var(--highlight); background: var(--highlight-bg); }
+
+.opt-box {
+  width: 18px; height: 18px; min-width: 18px; border-radius: 4px;
+  border: 1.5px solid var(--border); background: var(--bg);
+  display: flex; align-items: center; justify-content: center;
+  transition: all var(--speed) var(--ease); position: relative;
+}
+.option-label input:checked ~ .opt-box { background: var(--highlight); border-color: var(--highlight); }
+.opt-box::after {
+  content: ''; width: 5px; height: 9px;
+  border-right: 2px solid #fff; border-bottom: 2px solid #fff;
+  transform: rotate(45deg) translate(-1px,-1px); opacity: 0; transition: opacity 0.15s;
+}
+.option-label input:checked ~ .opt-box::after { opacity: 1; }
+
+.opt-box.radio { border-radius: 50%; }
+.opt-box.radio::after { width: 6px; height: 6px; background: #fff; border: none; border-radius: 50%; transform: none; }
+.option-label input[type="radio"]:checked ~ .opt-box.radio::after { opacity: 1; }
+
+/* ── ERROR ── */
+.field-error { font-size: 0.8rem; color: var(--error); display: none; margin-top: -6px; padding-left: 2px; }
+.field-error.visible { display: block; }
+
+/* ── NAV ── */
+.nav-row { display: flex; align-items: center; justify-content: space-between; margin-top: 28px; gap: 12px; }
+.nav-btn {
+  display: inline-flex; align-items: center; gap: 9px;
+  padding: 13px 26px; border-radius: 99px;
+  font-family: var(--font-body); font-size: 0.88rem; font-weight: 600;
+  letter-spacing: 0.025em; cursor: pointer; border: none;
+  transition: all var(--speed) var(--ease);
+}
+.nav-btn:disabled { opacity: 0.22; cursor: not-allowed; pointer-events: none; }
+.btn-prev { background: var(--surface); color: var(--accent); border: 1.5px solid var(--border); }
+.btn-prev:hover { background: var(--border); }
+.btn-next { background: var(--accent); color: #fff; margin-left: auto; }
+.btn-next:hover { background: var(--highlight); }
+.btn-submit { background: var(--success); color: #fff; margin-left: auto; }
+.btn-submit:hover { opacity: 0.88; }
+
+/* ── REVIEW SCREEN ── */
+#review-screen { display: none; flex-direction: column; gap: 28px; animation: fadeUp 0.45s var(--ease) both; }
+#review-screen.active { display: flex; }
+.review-title { font-family: var(--font-display); font-size: 1.85rem; letter-spacing: -0.02em; }
+.review-subtitle { color: var(--accent-light); font-size: 0.95rem; margin-top: -16px; }
+.review-section { border: 1.5px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+.review-section-title {
+  padding: 12px 18px; background: var(--surface);
+  font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em;
+  font-weight: 600; color: var(--muted); border-bottom: 1px solid var(--border);
+}
+.review-item {
+  padding: 12px 18px; border-bottom: 1px solid var(--border);
+  display: grid; grid-template-columns: 1fr 2fr; gap: 12px; font-size: 0.9rem;
+}
+.review-item:last-child { border-bottom: none; }
+.review-q { color: var(--muted); font-size: 0.83rem; }
+.review-a { color: var(--accent); font-weight: 500; line-height: 1.5; }
+.review-empty { color: var(--border); font-style: italic; }
+.review-nav { display: flex; gap: 12px; flex-wrap: wrap; }
+
+/* ── THANK YOU ── */
+#thankyou { display: none; flex-direction: column; align-items: center; text-align: center; gap: 18px; padding: 64px 0; animation: fadeUp 0.6s var(--ease) both; }
+#thankyou.active { display: flex; }
+.ty-ring { width: 76px; height: 76px; border-radius: 50%; background: #dcfce7; display: flex; align-items: center; justify-content: center; font-size: 2.2rem; }
+#thankyou h2 { font-family: var(--font-display); font-size: 2.1rem; letter-spacing: -0.02em; }
+#thankyou p { color: var(--accent-light); max-width: 420px; line-height: 1.72; }
+
+/* ── SAVE BANNER ── */
+#save-banner {
+  position: fixed; bottom: 88px; left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: var(--accent); color: #fff;
+  padding: 10px 22px; border-radius: 99px;
+  font-size: 0.82rem; font-weight: 500;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.3s, transform 0.3s;
+  z-index: 300; white-space: nowrap;
+}
+#save-banner.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ── A11Y BUTTON ── */
+#a11y-btn {
+  position: fixed; bottom: 28px; right: 28px;
+  width: 52px; height: 52px; border-radius: 50%;
+  background: var(--accent); color: #fff; border: none;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.18); z-index: 200;
+  transition: background var(--speed), transform var(--speed);
+}
+#a11y-btn:hover { background: var(--highlight); transform: scale(1.08); }
+#a11y-btn svg { width: 28px; height: 28px; }
+
+/* ── A11Y PANEL ── */
+#a11y-panel {
+  position: fixed; bottom: 92px; right: 28px; width: 260px;
+  background: var(--bg); border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: 0 8px 40px rgba(0,0,0,0.11);
+  padding: 18px; z-index: 200;
+  display: none; flex-direction: column; gap: 14px;
+  animation: fadeUp 0.28s var(--ease) both;
+}
+#a11y-panel.open { display: flex; }
+.a11y-head { display: flex; align-items: center; justify-content: space-between; }
+.a11y-title { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.09em; font-weight: 600; color: var(--accent); }
+.a11y-close { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 1.1rem; line-height: 1; padding: 2px 4px; }
+.a11y-row { display: flex; flex-direction: column; gap: 6px; }
+.a11y-row label { font-size: 0.83rem; font-weight: 500; color: var(--accent); }
+input[type="range"].a11y-slider {
+  width: 100%; accent-color: var(--highlight);
+  background: transparent; border: none; box-shadow: none; padding: 0; height: auto; border-radius: 0;
+}
+.a11y-toggle-row { display: flex; align-items: center; justify-content: space-between; font-size: 0.86rem; font-weight: 500; color: var(--accent); }
+.toggle { width: 38px; height: 21px; background: var(--border); border-radius: 99px; cursor: pointer; position: relative; transition: background var(--speed); border: none; flex-shrink: 0; }
+.toggle.on { background: var(--highlight); }
+.toggle::after { content: ''; position: absolute; top: 3px; left: 3px; width: 15px; height: 15px; background: #fff; border-radius: 50%; transition: left var(--speed) var(--ease); }
+.toggle.on::after { left: 20px; }
+.save-later-btn {
+  width: 100%; padding: 10px;
+  background: var(--surface); border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm); font-family: var(--font-body);
+  font-size: 0.83rem; font-weight: 600; color: var(--accent);
+  cursor: pointer; transition: all var(--speed); text-align: center;
+}
+.save-later-btn:hover { border-color: var(--highlight); color: var(--highlight); }
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+@keyframes slideIn { from{opacity:0;transform:translateX(36px)} to{opacity:1;transform:translateX(0)} }
+@keyframes slideOut { from{opacity:1;transform:translateX(0)} to{opacity:0;transform:translateX(-36px)} }
+@keyframes slideInBack { from{opacity:0;transform:translateX(-36px)} to{opacity:1;transform:translateX(0)} }
+
+/* ── REDUCED MOTION ── */
+body.reduce-motion *, body.reduce-motion *::before, body.reduce-motion *::after { animation:none!important; transition:none!important; }
+@media(prefers-reduced-motion:reduce){ *,*::before,*::after{animation:none!important;transition:none!important;} }
+/* Ensure a11y panel shows instantly when motion reduced */
+body.reduce-motion #a11y-panel { animation: none !important; }
+
+/* ── HIGH CONTRAST ── */
+body.high-contrast {
+  --bg: #000; --surface: #111; --border: #666;
+  --accent: #fff; --accent-light: #ddd; --muted: #bbb;
+  --highlight: #f0b429; --highlight-bg: #1a1500;
+  --error: #ff6b6b;
+}
+body.high-contrast input,
+body.high-contrast textarea,
+body.high-contrast select {
+  background: var(--surface) !important;
+  color: var(--accent) !important;
+  border-color: var(--border) !important;
+}
+body.high-contrast .option-label {
+  background: var(--surface) !important;
+  border-color: var(--border) !important;
+  color: var(--accent) !important;
+}
+body.high-contrast header {
+  background: rgba(0,0,0,0.97) !important;
+  border-color: var(--border) !important;
+}
+body.high-contrast .btn-next,
+body.high-contrast .btn-submit {
+  background: var(--highlight) !important;
+  color: #000 !important;
+}
+
+/* ── RESPONSIVE ── */
+@media(max-width:580px){
+  header { padding: 16px 18px; }
+  .progress-track { width: 72px; }
+  main { padding: 36px 16px 120px; }
+  .options-grid { grid-template-columns: 1fr 1fr; }
+  .review-item { grid-template-columns: 1fr; gap: 4px; }
+  #a11y-panel { width: calc(100vw - 32px); right: 16px; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Studio<span>.</span></div>
+  <div class="header-right">
+    <span class="section-badge" id="section-badge">Business &amp; Goals</span>
+    <div class="progress-row">
+      <span class="progress-label" id="progress-label">1 of 24</span>
+      <div class="progress-track" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" aria-label="Progress">
+        <div class="progress-fill" id="progress-fill"></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main id="main-content">
+
+<div class="intro" id="intro-block">
+  <p class="intro-eyebrow">New Project</p>
+  <h1>Let's build something great together.</h1>
+  <p>This questionnaire helps me understand your business, goals, and vision. Take your time — there are no wrong answers. Your responses will shape every decision I make for your site.</p>
+</div>
+
+<!-- Q1 -->
+<div class="question-card active" data-index="0" role="group" aria-labelledby="ql0">
+  <div class="q-meta"><span class="q-number">Question 1 of 24</span><span class="q-section-tag">Business &amp; Goals</span></div>
+  <p class="question-text" id="ql0">What is your business name?<span class="required">*</span></p>
+  <input type="text" id="q0" name="business_name" placeholder="e.g. Maple &amp; Co." autocomplete="organization" aria-required="true"/>
+  <span class="field-error" id="e0">Please fill in this field to continue.</span>
+  <div class="nav-row">
+    <button class="nav-btn btn-prev" onclick="go(-1)" disabled aria-label="Previous">← Back</button>
+    <button class="nav-btn btn-next" onclick="go(1)">Next →</button>
+  </div>
+</div>
+
+<!-- Q2 -->
+<div class="question-card" data-index="1" role="group" aria-labelledby="ql1">
+  <div class="q-meta"><span class="q-number">Question 2 of 24</span><span class="q-section-tag">Business &amp; Goals</span></div>
+  <p class="question-text" id="ql1">What industry or field are you in?<span class="required">*</span></p>
+  <div class="custom-select-wrap">
+    <select id="q1" name="industry" onchange="handleOther('q1','q1-other')">
+      <option value="">Select an industry…</option>
+      <option>Automotive</option>
+      <option>Beauty &amp; Hair</option>
+      <option>Cleaning Services</option>
+      <option>Construction &amp; Contracting</option>
+      <option>Fitness &amp; Personal Training</option>
+      <option>Food &amp; Restaurant</option>
+      <option>Healthcare &amp; Medical</option>
+      <option>HVAC &amp; Plumbing</option>
+      <option>Legal</option>
+      <option>Photography</option>
+      <option>Real Estate</option>
+      <option>Retail &amp; E-commerce</option>
+      <option>Tech &amp; Software</option>
+      <option value="Other">Other…</option>
+    </select>
+  </div>
+  <div class="other-input-wrap" id="q1-other">
+    <input type="text" id="q1-other-val" placeholder="Please specify your industry"/>
+  </div>
+  <span class="field-error" id="e1">Please select an option to continue.</span>
+  <div class="nav-row">
+    <button class="nav-btn btn-prev" onclick="go(-1)">← Back</button>
+    <button class="nav-btn btn-next" onclick="go(1)">Next →</button>
+  </div>
+</div>
+
+<!-- Q3 -->
+<div class="question-card" data-index="2" role="group" aria-labelledby="ql2">
+  <div class="q-meta"><span class="q-number">Question 3 of 24</span><span class="q-section-tag">Business &amp; Goals</span></div>
+  <p class="question-text" id="ql2">Briefly describe what your business does.</p>
+  <p class="question-hint">In 2–3 sentences, explain what you offer and who you serve.</p>
+  <div class="char-wrap">
+    <textarea id="q2" name="description" placeholder="We help small businesses…" maxlength="500" oninput="counter(this,'cc2',500)"></textarea>
+    <span class="char-counter" id="cc2">0 / 500</span>
+  </div>
+  <div class="nav-row">
+    <button class="nav-btn btn-prev" onclick="go(-1)">← Back</button>
+    <button class="nav-btn btn-next" onclick="go(1)">Next →</button>
+  </div>
+</div>
+
+<!-- Q4 -->
+<div class="question-card" data-index="3" role="group" aria-labelledby="ql3">
+  <div class="q-meta"><span class="q-number">Question 4 of 24</span><span class="q-section-tag">Business &amp; Goals</span></div>
+  <p class="question-text" id="ql3">What is the primary goal of your new website?<span class="required">*</span></p>
+  <div class="custom-select-wrap">
+    <select id="q3" name="goal" onchange="handleOther('q3','q3-other')">
+      <option value="">Choose a primary goal…</option>
+      <option>Generate leads &amp; enquiries</option>
+      <option>Sell products online</option>
+      <option>Showcase a portfolio</option>
+      <option>Accept bookings or appointments</option>
+      <option>Share information &amp; resources</option>
+      <option>Build a community</option>
+      <option>Establish brand credibility</option>
+      <option value="Other">Other…</option>
+    </select>
+  </div>
+  <div class="other-input-wrap" id="q3-other">
+    <input type="text" id="q3-other-val" placeholder="Describe your goal"/>
+  </div>
+  <span class="field-error" id="e3">Please select an option to continue.</span>
+  <div class="nav-row">
+    <button class="nav-btn btn-prev" onclick="go(-1)">← Back</button>
+    <button class="nav-btn btn-next" onclick="go(1)">Next →</button>
+  </div>
+</div>
+
+<!-- Q5 -->
+<div class="question-card" data-index="4" role="group" aria-labelledby="ql4">
+  <div class="q-meta"><span class="q-number">Question 5 of 24</span><span class="q-section-tag">Business &amp; Goals</span></div>
+  <p class="question-text" id="ql4">Who is your target audience or ideal customer?</p>
+  <p class="question-hint">Think about age, profession, interests, location.</p>
+  <div class="char-wrap">
+    <textarea id="q4" name="audience" placeholder="e.g. Women aged 30–50, small business owners in the UK…" maxlength="400" oninput="counter(this,'cc4',400)"></textarea>
+    <span class="char-counter" id="cc4">0 / 400</span>
+  </div>
+  <div class="nav-row">
+    <button class="nav-btn btn-prev" onclick="go(-1)">← Back</button>
+    <button class="nav-btn btn-next" onclick="go(1)">Next →</button>
+  </div>
+</div>
+
+<!-- Q6 -->
+<div class="question-card" data-index="5" role="group" aria-labelledby="ql5">
+  <div class="q-meta"><span class="q-number">Question 6 of 24</span><span class="q-section-tag">Business &amp; Goals</span></div>
+  <p class="question-text" id="ql5">What does success look like for your site in 6 months?</p>
+  <div class="char-wrap">
+    <textarea id="q5" name="success" placeholder="e.g. 10 new enquiries per month, consistently booking out my calendar…" maxlength="400" oninput="counter(this,'cc5',400)"></textarea>
+    <span class="char-counter" id="cc5">0 / 400</span>
+  </div>
+  <div class="nav-row">
+    <button class="nav-btn btn-prev" onclick="go(-1)">← Back</button>
+    <button class="nav-btn btn-next" onclick="go(1)">Next →</button>
+  </div>
+</div>
+
+<!-- Q7 -->
+<div class="question-card" data-index="6" role="group" aria-labelledby="ql6">
+  <div class="q-meta"><span class="q-number">Question 7 of 24</span><span class="q-section-tag">Existing Presence</span></div>
+  <p class="question-text" id="ql6">Do you have a current website?</p>
+  <div class="options-grid">
+    <label class="option-label"><input type="radio" name="has_site" value="Yes"/><span class="opt-box radio"></span>Yes</label>
+    <label class="option-label"><input type="radio" name="has_site" value="No"/><span class="opt-box radio"></span>No</label>
+  </div>
+  <input type="url" id="q6" name="current_url" placeholder="If yes — paste the URL here" aria-label="Current website URL"/>
+  <div class="nav-row">
+    <button class="nav-btn btn-prev" onclick="go(-1)">← Back</button>
+    <button class="nav-btn btn-next" onclick="go(1)">Next →</button>
+  </div>
+</div>
+
+<!-- Q8 -->
+<div class="question-card" data-index="7" role="group" aria-labelledby="ql7">
+  <div class="q-meta"><span class="q-number">Question 8 of 24</span><span class="q-section-tag">Existing Presence</span></div>
+  <p class="question-text" id="ql7">What do you like and dislike about your current site?</p>
+  <p class="question-hint">Skip if you don't have one.</p>
+  <div class="char-wrap">
+    <textarea id="q7" name="site_feedback" placeholder="e.g. I like the colour scheme but the navigation is confusing…" maxlength="500" oninput="counter(this,'cc7',500)"></textarea>
+    <span class="char-counter" id="cc7">0 / 500</span>
+  </div>
+  <div class="nav-row">
+    <button class="nav-btn btn-prev" onclick="go(-1)">← Back</button>
+    <button class="nav-btn btn-next" onclick="go(1)">Next →</button>
+  </div>
+</div>
+
+<!-- Q9 -->
+<div class="question-card" data-index="8" role="group" aria-labelledby="ql8">
+  <div class="q-meta"><span class="q-number">Question 9 of 24</span><span class="q-section-tag">Existing Presence</span></div>
+  <p class="question-text" id="ql8">Do you have existing brand assets?</p>
+  <p class="question-hint">Select everything that already exists.</p>
+  <div class="options-grid">
+    <label class="option-label"><input type="checkbox" name="assets" value="Logo"/><span class="opt-box"></span>Logo</label>
+    <label class="option-label"><input type="checkbox" name="assets" value="Brand colours"/><span class="opt-box"></span>Brand colours</label>
+    <label class="option-label"><input type="checkbox" name="assets" value="Fonts/Typography"/><span class="opt-box"></span>Fonts / Typography</label>
+    <label class="option-label"><input type="checkbox" name="assets" value="Style guide"/><span class="opt-box"></span>Style guide</label>
+    <label class="option-label"><input type="checkbox" name="assets" value="Photography"/><span class="opt-box"></span>Photography</label>
+    <label class="option-label"><input type="checkbox" name="assets" value="None yet"/><span class="opt-box"></span>None yet</label>
+  </div>
+  <div class="nav-row">
+    <button class="nav-btn btn-prev" onclick="go(-1)">← Back</button>
+    <button class="nav-btn btn-next" onclick="go(1)">Next →</button>
+  </div>
+</div>
+
+<!-- Q10 -->
+<div class="question-card" data-index="9" role="group" aria-labelledby="ql9">
+  <div class="q-meta"><span class="q-number">Question 10 of 24</span><span class="q-section-tag">Design &amp; Style</span></div>
+  <p class="question-text" id="ql9">Share 2–3 websites you love — and why you love them.</p>
+  <p class="question-hint">Paste URLs or just describe them. This helps me understand your taste.</p>
+  <div class="char-wrap">
+    <textarea id="q9" name="inspiration" placeholder="e.g. https://example.com — I love the clean layout and big photography…" maxlength="600" oninput="counter(this,'cc9',600)"></textarea>
+    <span class="char-counter" id="cc9">0 / 600</span>
+  </div>
+  <div class="nav-row">
+    <button class="nav-btn btn-prev" onclick="go(-1)">← Back</button>
+    <button class="nav-btn btn-next" onclick="go(1)">Next →</button>
+  </div>
+</div>
+
+<!-- Q11 -->
+<div class="question-card" data-index="10" role="group" aria-labelledby="ql10">
+  <div class="q-meta"><span class="q-number">Question 11 of 24</span><span class="q-section-tag">Design &amp; Style</span></div>
+  <p class="question-text" id="ql10">How would you describe the feel you want?</p>
+  <p class="question-hint">Choose as many as apply.</p>
+  <div class="options-grid">
+    <label class="option-label"><input type="checkbox" name="feel" value="Clean &amp; Modern"/><span class="opt-box"></span>Clean &amp; Modern</label>
+    <label class="option-label"><input type="checkbox" name="feel" value="Bold &amp; Eye-catching"/><span class="opt-box"></span>Bold &amp; Eye-catching</label>
+    <label class="option-label"><input type="checkbox" name="feel" value="Warm &amp; Friendly"/><span class="opt-box"></span>Warm &amp; Friendly</label>
+    <label class="option-label"><input type="checkbox" name="feel" value="Professional &amp; Corporate"/><span class="opt-box"></span>Professional &amp; Corporate</label>
+    <label class="option-label"><input type="checkbox" name="feel" value="Luxury &amp; High-end"/><span class="opt-box"></span>Luxury &amp; High-end</label>
+    <label class="option-label"><input type="checkbox" name="feel" value="Fun &amp; Playful"/><span class="opt-box"></span>Fun &amp; Playful</label>
+  </div>
+  <div class="nav-row">
+    <button class="nav-btn btn-prev" onclick="go(-1)">← Back</button>
+    <button class="nav-btn btn-next" onclick="go(1)">Next →</button>
+  </div>
+</div>
+
+<!-- Q12 -->
+<div class="question-card" data-index="11" role="group" aria-labelledby="ql11">
+  <div class="q-meta"><span class="q-number">Question 12 of 24</span><span class="q-section-tag">Design &amp; Style</span></div>
+  <p class="question-text" id="ql11">Any colours, styles, or design choices to avoid?</p>
+  <div class="char-wrap">
+    <textarea id="q11" name="avoid" placeholder="e.g. No dark backgrounds, nothing too corporate, avoid bright green…" maxlength="400" oninput="counter(this,'cc11',400)"></textarea>
+    <span class="char-counter" id="cc11">0 / 400</span>
+  </div>
+  <div class="nav-row">
+    <button class="nav-btn btn-prev" onclick="go(-1)">← Back</button>
+    <button class="nav-btn btn-next" onclick="go(1)">Next →</button>
+  </div>
+</div>
+
+<!-- Q13 -->
+<div class="question-card" data-index="12" role="group" aria-labelledby="ql12">
+  <div class="q-meta"><span class="q-number">Question 13 of 24</span><span class="q-section-tag">Content</span></div>
+  <p class="question-text" id="ql12">Who will write the website copy?<span class="required">*</span></p>
+  <div class="custom-select-wrap">
+    <select id="q12" name="copy" aria-required="true">
+      <option value="">Choose an option…</option>
+      <option>I will write it myself</option>
+      <option>I need help with copy</option>
+      <option>We'll collaborate on it</option>
+      <option>Not sure yet</option>
+    </select>
+  </div>
+  <span class="field-error" id="e12">Please select an option to continue.</span>
+  <div class="nav-row">
+    <button class="nav-btn btn-prev" onclick="go(-1)">← Back</button>
+    <button class="nav-btn btn-next" onclick="go(1)">Next →</button>
+  </div>
+</div>
+
+<!-- Q14 -->
+<div class="question-card" data-index="13" role="group" aria-labelledby="ql13">
+  <div class="q-meta"><span class="q-number">Question 14 of 24</span><span class="q-section-tag">Content</span></div>
+  <p class="question-text" id="ql13">Do you have photography or video, or will you need it?</p>
+  <div class="custom-select-wrap">
+    <select id="q13" name="media">
+      <option value="">Choose an option…</option>
+      <option>I have my own photos / video</option>
+      <option>I need a photographer or videographer</option>
+      <option>Stock imagery is fine</option>
+      <option>A mix of my own and stock</option>
+      <option>Not sure yet</option>
+    </select>
+  </div>
+  <div class="nav-row">
+    <button class="nav-btn btn-prev" onclick="go(-1)">← Back</button>
+    <button class="nav-btn btn-next" onclick="go(1)">Next →</button>
+  </div>
+</div>
+
+<!-- Q15 -->
+<div class="question-card" data-index="14" role="group" aria-labelledby="ql14">
+  <div class="q-meta"><span class="q-number">Question 15 of 24</span><span class="q-section-tag">Content</span></div>
+  <p class="question-text" id="ql14">What pages do you think your site needs?</p>
+  <p class="question-hint">Select all you know you'll need — we can refine this together.</p>
+  <div class="options-grid">
+    <label class="option-label"><input type="checkbox" name="pages" value="Home"/><span class="opt-box"></span>Home</label>
+    <label class="option-label"><input type="checkbox" name="pages" value="About"/><span class="opt-box"></span>About</label>
+    <label class="option-label"><input type="checkbox" name="pages" value="Services"/><span class="opt-box"></span>Services</label>
+    <label class="option-label"><input type="checkbox" name="pages" value="Portfolio"/><span class="opt-box"></span>Portfolio / Work</label>
+    <label class="option-label"><input type="checkbox" name="pages" value="Blog"/><span class="opt-box"></span>Blog</label>
+    <label class="option-label"><input type="checkbox" name="pages" value="Shop"/><span class="opt-box"></span>Shop</label>
+    <label class="option-label"><input type="checkbox" name="pages" value="Contact"/><span class="opt-box"></span>Contact</label>
+    <label class="option-label"><input type="checkbox" name="pages" value="FAQ"/><span class="opt-box"></span>FAQ</label>
+    <label class="option-label"><input type="checkbox" name="pages" value="Testimonials"/><span class="opt-box"></span>Testimonials</label>
+    <label class="option-label"><input type="checkbox" name="pages" value="Pricing"/><span class="opt-box"></span>Pricing</label>
+  </div>
+  <div class="nav-row">
+    <button class="nav-btn btn-prev" onclick="go(-1)">← Back</button>
+    <button class="nav-btn btn-next" onclick="go(1)">Next →</button>
+  </div>
+</div>
+
+<!-- Q16 -->
+<div class="question-card" data-index="15" role="group" aria-labelledby="ql15">
+  <div class="q-meta"><span class="q-number">Question 16 of 24</span><span class="q-section-tag">Features &amp; Functionality</span></div>
+  <p class="question-text" id="ql15">Which features will your site need?</p>
+  <p class="question-hint">Check everything that applies — even if you're not sure yet.</p>
+  <div class="options-grid">
+    <label class="option-label"><input type="checkbox" name="features" value="Contact form"/><span class="opt-box"></span>Contact form</label>
+    <label class="option-label"><input type="checkbox" name="features" value="Online booking"/><span class="opt-box"></span>Online booking</label>
+    <label class="option-label"><input type="checkbox" name="features" value="E-commerce"/><span class="opt-box"></span>E-commerce</label>
+    <label class="option-label"><input type="checkbox" name="features" value="Payment processing"/><span class="opt-box"></span>Payment processing</label>
+    <label class="option-label"><input type="checkbox" name="features" value="Newsletter signup"/><span class="opt-box"></span>Newsletter signup</label>
+    <label class="option-label"><input type="checkbox" name="features" value="Blog / CMS"/><span class="opt-box"></span>Blog / CMS</label>
+    <label class="option-label"><input type="checkbox" name="features" value="Client login"/><span class="opt-box"></span>Client login</label>
+    <label class="option-label"><input type="checkbox" name="features" value="Live chat"/><span class="opt-box"></span>Live chat</label>
+    <label class="option-label"><input type="checkbox" name="features" value="Multi-language"/><span class="opt-box"></span>Multi-language</label>
+    <label class="option-label"><input type="checkbox" name="features" value="Social feeds"/><span class="opt-box"></span>Social feeds</label>
+    <label class="option-label"><input type="checkbox" name="features" value="Analytics"/><span class="opt-box"></span>Analytics</label>
+    <label class="option-label"><input type="checkbox" name="features" value="SEO optimisation"/><span class="opt-box"></span>SEO optimisation</label>
+  </div>
+  <div class="nav-row">
+    <button class="nav-btn btn-prev" onclick="go(-1)">← Back</button>
+    <button class="nav-btn btn-next" onclick="go(1)">Next →</button>
+  </div>
+</div>
+
+<!-- Q17 -->
+<div class="question-card" data-index="16" role="group" aria-labelledby="ql16">
+  <div class="q-meta"><span class="q-number">Question 17 of 24</span><span class="q-section-tag">Features &amp; Functionality</span></div>
+  <p class="question-text" id="ql16">Any tools or platforms that need to integrate with the site?</p>
+  <p class="question-hint">e.g. Mailchimp, HubSpot, Calendly, Shopify, Stripe…</p>
+  <div class="char-wrap">
+    <textarea id="q16" name="integrations" placeholder="List any tools you use or want to connect…" maxlength="400" oninput="counter(this,'cc16',400)"></textarea>
+    <span class="char-counter" id="cc16">0 / 400</span>
+  </div>
+  <div class="nav-row">
+    <button class="nav-btn btn-prev" onclick="go(-1)">← Back</button>
+    <button class="nav-btn btn-next" onclick="go(1)">Next →</button>
+  </div>
+</div>
+
+<!-- Q18 -->
+<div class="question-card" data-index="17" role="group" aria-labelledby="ql17">
+  <div class="q-meta"><span class="q-number">Question 18 of 24</span><span class="q-section-tag">Technical &amp; Logistics</span></div>
+  <p class="question-text" id="ql17">Do you already have a domain name?</p>
+  <div class="options-grid">
+    <label class="option-label"><input type="radio" name="domain_status" value="Yes"/><span class="opt-box radio"></span>Yes, I have one</label>
+    <label class="option-label"><input type="radio" name="domain_status" value="No"/><span class="opt-box radio"></span>No, I need one</label>
+    <label class="option-label"><input type="radio" name="domain_status" value="Not sure"/><span class="opt-box radio"></span>Not sure</label>
+  </div>
+  <input type="text" id="q17" name="domain_name" placeholder="If yes — what is it? (e.g. mybusiness.com)" aria-label="Domain name"/>
+  <div class="nav-row">
+    <button class="nav-btn btn-prev" onclick="go(-1)">← Back</button>
+    <button class="nav-btn btn-next" onclick="go(1)">Next →</button>
+  </div>
+</div>
+
+<!-- Q19 -->
+<div class="question-card" data-index="18" role="group" aria-labelledby="ql18">
+  <div class="q-meta"><span class="q-number">Question 19 of 24</span><span class="q-section-tag">Technical &amp; Logistics</span></div>
+  <p class="question-text" id="ql18">Who will maintain and update the site after launch?</p>
+  <div class="custom-select-wrap">
+    <select id="q18" name="maintenance">
+      <option value="">Choose an option…</option>
+      <option>I'll manage it myself</option>
+      <option>I want you to handle it</option>
+      <option>We'll share responsibility</option>
+      <option>Not sure yet</option>
+    </select>
+  </div>
+  <div class="nav-row">
+    <button class="nav-btn btn-prev" onclick="go(-1)">← Back</button>
+    <button class="nav-btn btn-next" onclick="go(1)">Next →</button>
+  </div>
+</div>
+
+<!-- Q20 -->
+<div class="question-card" data-index="19" role="group" aria-labelledby="ql19">
+  <div class="q-meta"><span class="q-number">Question 20 of 24</span><span class="q-section-tag">Timeline &amp; Budget</span></div>
+  <p class="question-text" id="ql19">When do you need the site to be live?</p>
+  <div class="custom-select-wrap">
+    <select id="q19" name="timeline">
+      <option value="">Choose a timeframe…</option>
+      <option>As soon as possible</option>
+      <option>Within a week</option>
+      <option>2–4 weeks</option>
+      <option>1–3 months</option>
+      <option>3–6 months</option>
+      <option>I'm flexible</option>
+    </select>
+  </div>
+  <input type="text" id="q19b" name="hard_deadline" placeholder="Any hard deadline? (e.g. product launch, event date…)" style="margin-top:2px;" aria-label="Hard deadline"/>
+  <div class="nav-row">
+    <button class="nav-btn btn-prev" onclick="go(-1)">← Back</button>
+    <button class="nav-btn btn-next" onclick="go(1)">Next →</button>
+  </div>
+</div>
+
+<!-- Q21 -->
+<div class="question-card" data-index="20" role="group" aria-labelledby="ql20">
+  <div class="q-meta"><span class="q-number">Question 21 of 24</span><span class="q-section-tag">Timeline &amp; Budget</span></div>
+  <p class="question-text" id="ql20">What is your approximate budget for this project?</p>
+  <div class="custom-select-wrap">
+    <select id="q20" name="budget">
+      <option value="">Choose a range…</option>
+      <option>Under $1,000</option>
+      <option>$1,000 – $3,000</option>
+      <option>$3,000 – $6,000</option>
+      <option>$6,000 – $10,000</option>
+      <option>$10,000+</option>
+      <option>Prefer not to say</option>
+    </select>
+  </div>
+  <div class="nav-row">
+    <button class="nav-btn btn-prev" onclick="go(-1)">← Back</button>
+    <button class="nav-btn btn-next" onclick="go(1)">Next →</button>
+  </div>
+</div>
+
+<!-- Q22 -->
+<div class="question-card" data-index="21" role="group" aria-labelledby="ql21">
+  <div class="q-meta"><span class="q-number">Question 22 of 24</span><span class="q-section-tag">Competition</span></div>
+  <p class="question-text" id="ql21">Who are your top 2–3 competitors?</p>
+  <p class="question-hint">Names, websites, or both.</p>
+  <div class="char-wrap">
+    <textarea id="q21" name="competitors" placeholder="e.g. Company A (companya.com), Company B…" maxlength="400" oninput="counter(this,'cc21',400)"></textarea>
+    <span class="char-counter" id="cc21">0 / 400</span>
+  </div>
+  <div class="nav-row">
+    <button class="nav-btn btn-prev" onclick="go(-1)">← Back</button>
+    <button class="nav-btn btn-next" onclick="go(1)">Next →</button>
+  </div>
+</div>
+
+<!-- Q23 -->
+<div class="question-card" data-index="22" role="group" aria-labelledby="ql22">
+  <div class="q-meta"><span class="q-number">Question 23 of 24</span><span class="q-section-tag">Competition</span></div>
+  <p class="question-text" id="ql22">What do you want to do better than your competitors online?</p>
+  <div class="char-wrap">
+    <textarea id="q22" name="differentiation" placeholder="e.g. Better photography, clearer messaging, easier to book…" maxlength="400" oninput="counter(this,'cc22',400)"></textarea>
+    <span class="char-counter" id="cc22">0 / 400</span>
+  </div>
+  <div class="nav-row">
+    <button class="nav-btn btn-prev" onclick="go(-1)">← Back</button>
+    <button class="nav-btn btn-next" onclick="go(1)">Next →</button>
+  </div>
+</div>
+
+<!-- Q24 -->
+<div class="question-card" data-index="23" role="group" aria-labelledby="ql23">
+  <div class="q-meta"><span class="q-number">Question 24 of 24</span><span class="q-section-tag">Wrap Up</span></div>
+  <p class="question-text" id="ql23">Last one — how can I reach you?<span class="required">*</span></p>
+  <p class="question-hint">Drop your contact details and any final thoughts below.</p>
+  <input type="email" id="q23e" name="email" placeholder="Email address" autocomplete="email" aria-label="Email" aria-required="true"/>
+  <span class="field-error" id="e23">Please enter your email address to continue.</span>
+  <input type="tel" id="q23p" name="phone" placeholder="Phone number (optional)" autocomplete="tel" aria-label="Phone" style="margin-top:-4px;"/>
+  <div class="char-wrap">
+    <textarea id="q23" name="final_notes" placeholder="Any final thoughts, questions, or anything I should know…" maxlength="600" oninput="counter(this,'cc23',600)"></textarea>
+    <span class="char-counter" id="cc23">0 / 600</span>
+  </div>
+  <div class="nav-row">
+    <button class="nav-btn btn-prev" onclick="go(-1)">← Back</button>
+    <button class="nav-btn btn-next" onclick="showReview()" style="background:var(--highlight);">Review answers →</button>
+  </div>
+</div>
+
+<!-- REVIEW SCREEN -->
+<div id="review-screen" role="region" aria-label="Review your answers">
+  <h2 class="review-title">Review your answers</h2>
+  <p class="review-subtitle">Take a look before you send — go back to edit anything.</p>
+  <div id="review-body"></div>
+  <div class="review-nav">
+    <button class="nav-btn btn-prev" onclick="backFromReview()">← Edit answers</button>
+    <button class="nav-btn btn-submit" onclick="submitForm()">Submit ✓</button>
+  </div>
+</div>
+
+<!-- THANK YOU -->
+<div id="thankyou" role="status" aria-live="polite">
+  <div class="ty-ring">✓</div>
+  <h2>Thank you!</h2>
+  <p>I've received your answers and will be in touch soon. Looking forward to building something great together.</p>
+</div>
+
+</main>
+
+<!-- SAVE BANNER -->
+<div id="save-banner" aria-live="polite">Progress saved ✓</div>
+
+<!-- ACCESSIBILITY BUTTON — standard wheelchair / accessibility symbol -->
+<button id="a11y-btn" aria-label="Accessibility options" aria-expanded="false" onclick="toggleA11y()">
+  <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <!-- Head -->
+    <circle cx="16" cy="6" r="3" fill="white"/>
+    <!-- Body -->
+    <path d="M16 10 L16 20" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+    <!-- Arms -->
+    <path d="M10 14 L22 14" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+    <!-- Left leg -->
+    <path d="M16 20 L11 28" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+    <!-- Right leg (bent — wheelchair pose) -->
+    <path d="M16 20 L21 28" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+  </svg>
+</button>
+
+<!-- ACCESSIBILITY PANEL (simplified) -->
+<div id="a11y-panel" role="dialog" aria-label="Accessibility settings">
+  <div class="a11y-head">
+    <span class="a11y-title">Accessibility</span>
+    <button class="a11y-close" onclick="toggleA11y()" aria-label="Close">✕</button>
+  </div>
+  <div class="a11y-row">
+    <label for="font-slider">Text size</label>
+    <input type="range" id="font-slider" class="a11y-slider" min="14" max="22" value="16" step="1" oninput="setFontSize(this.value)" aria-label="Text size"/>
+  </div>
+  <div class="a11y-toggle-row">
+    <span>High contrast</span>
+    <button class="toggle" id="tog-contrast" onclick="toggleContrast()" aria-label="Toggle high contrast" aria-pressed="false"></button>
+  </div>
+  <div class="a11y-toggle-row">
+    <span>Reduce motion</span>
+    <button class="toggle" id="tog-motion" onclick="toggleMotion()" aria-label="Toggle reduce motion" aria-pressed="false"></button>
+  </div>
+  <button class="save-later-btn" onclick="saveProgress()">💾 Save &amp; continue later</button>
+</div>
+
+<script>
+// ═══ STATE ═══
+let current = 0;
+const cards = Array.from(document.querySelectorAll('.question-card'));
+const TOTAL = cards.length;
+let goingBack = false;
+
+const SECTIONS = [
+  "Business & Goals","Business & Goals","Business & Goals","Business & Goals","Business & Goals","Business & Goals",
+  "Existing Presence","Existing Presence","Existing Presence",
+  "Design & Style","Design & Style","Design & Style",
+  "Content","Content","Content",
+  "Features & Functionality","Features & Functionality",
+  "Technical & Logistics","Technical & Logistics",
+  "Timeline & Budget","Timeline & Budget",
+  "Competition","Competition","Wrap Up"
+];
+
+// ═══ NAVIGATION ═══
+function go(dir) {
+  if (dir === 1 && !validate(current)) return;
+  goingBack = dir === -1;
+
+  // Hide outgoing card immediately (no leave animation — avoids layout glitch)
+  cards[current].classList.remove('active');
+
+  current = Math.max(0, Math.min(TOTAL - 1, current + dir));
+  const arriving = cards[current];
+
+  // Remove any stale animation classes before adding active
+  arriving.classList.remove('going-back', 'active');
+  // Force reflow so animation restarts cleanly
+  void arriving.offsetWidth;
+
+  if (goingBack) arriving.classList.add('going-back');
+  arriving.classList.add('active');
+
+  // Clean up going-back after animation completes
+  if (goingBack) setTimeout(() => arriving.classList.remove('going-back'), 420);
+
+  updateUI();
+  document.getElementById('intro-block').style.display = current === 0 ? '' : 'none';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  // Focus the question label for screen readers
+  const lbl = arriving.querySelector('[id^="ql"]');
+  if (lbl) { lbl.setAttribute('tabindex', '-1'); lbl.focus(); }
+
+  autoSave();
+}
+
+function updateUI() {
+  const pct = Math.round((current/TOTAL)*100);
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('progress-fill').parentElement.setAttribute('aria-valuenow', pct);
+  document.getElementById('progress-label').textContent = (current+1)+' of '+TOTAL;
+  document.getElementById('section-badge').textContent = SECTIONS[current] || '';
+}
+
+// ═══ VALIDATION ═══
+const REQUIRED = {
+  0:{type:'text',id:'q0'},
+  1:{type:'select',id:'q1'},
+  3:{type:'select',id:'q3'},
+  12:{type:'select',id:'q12'},
+  23:{type:'email',id:'q23e'}
+};
+function validate(idx) {
+  const rule = REQUIRED[idx];
+  if (!rule) return true;
+  const errEl = document.getElementById('e'+idx);
+  let valid = false;
+  if (rule.type==='text') valid = !!(document.getElementById(rule.id)||{}).value?.trim();
+  if (rule.type==='select') valid = !!(document.getElementById(rule.id)||{}).value;
+  if (rule.type==='email') { const v=(document.getElementById(rule.id)||{}).value||''; valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
+  if (errEl) errEl.classList.toggle('visible', !valid);
+  return valid;
+}
+
+// ═══ OTHER DROPDOWN ═══
+function handleOther(selId, wrapId) {
+  const sel = document.getElementById(selId);
+  const wrap = document.getElementById(wrapId);
+  if (sel && wrap) wrap.classList.toggle('open', sel.value === 'Other');
+}
+
+// ═══ CHAR COUNTER ═══
+function counter(el, ccId, max) {
+  const cc = document.getElementById(ccId);
+  if (!cc) return;
+  const len = el.value.length;
+  cc.textContent = len+' / '+max;
+  cc.classList.toggle('warn', len > max*0.9);
+}
+
+// ═══ SAVE / RESTORE ═══
+function gatherAnswers() {
+  const data = {_index: current};
+  document.querySelectorAll('input,textarea,select').forEach(el => {
+    if (!el.name || el.name === '') return;
+    if (el.type==='checkbox'||el.type==='radio') {
+      if (el.checked) data[el.name] = data[el.name] ? data[el.name]+', '+el.value : el.value;
+    } else if (el.value) {
+      data[el.name] = el.value;
+    }
+  });
+  return data;
+}
+function autoSave() { try { localStorage.setItem('cq_v2', JSON.stringify(gatherAnswers())); } catch(e){} }
+function saveProgress() {
+  autoSave();
+  const b = document.getElementById('save-banner');
+  b.classList.add('show');
+  setTimeout(() => b.classList.remove('show'), 2500);
+}
+function restoreProgress() {
+  try {
+    const raw = localStorage.getItem('cq_v2');
+    if (!raw) return;
+    const data = JSON.parse(raw);
+    Object.entries(data).forEach(([name, val]) => {
+      if (name==='_index') return;
+      document.querySelectorAll(`[name="${name}"]`).forEach(el => {
+        if (el.type==='checkbox'||el.type==='radio') {
+          if (val.split(', ').includes(el.value)) el.checked = true;
+        } else {
+          el.value = val;
+          if (el.tagName==='SELECT') handleOther(el.id, el.id+'-other');
+        }
+      });
+    });
+    if (data._index > 0) {
+      cards[0].classList.remove('active');
+      current = Math.min(data._index, TOTAL-1);
+      // Add active without animation
+      const card = cards[current];
+      card.style.animation = 'none';
+      card.classList.add('active');
+      requestAnimationFrame(() => { card.style.animation = ''; });
+      document.getElementById('intro-block').style.display = 'none';
+      updateUI();
+    }
+  } catch(e){}
+}
+
+// ═══ REVIEW SCREEN ═══
+const Q_LABELS = [
+  "Business name","Industry","Business description","Primary goal","Target audience","Success in 6 months",
+  "Current website","Likes / dislikes","Brand assets","Inspiration sites","Desired feel","Styles to avoid",
+  "Who writes copy","Photography / video","Pages needed","Features needed","Integrations",
+  "Domain name","Post-launch maintenance","Launch timeline","Budget","Competitors","Differentiator","Contact & notes"
+];
+const REVIEW_SECS = [
+  {title:"Business & Goals", range:[0,5]},
+  {title:"Existing Presence", range:[6,8]},
+  {title:"Design & Style", range:[9,11]},
+  {title:"Content", range:[12,14]},
+  {title:"Features & Functionality", range:[15,16]},
+  {title:"Technical & Logistics", range:[17,18]},
+  {title:"Timeline & Budget", range:[19,20]},
+  {title:"Competition", range:[21,22]},
+  {title:"Wrap Up", range:[23,23]}
+];
+const FIELD_MAP = [
+  ['business_name'],['industry','q1-other-val-value'],['description'],['goal','q3-other-val-value'],['audience'],['success'],
+  ['has_site','current_url'],['site_feedback'],['assets'],
+  ['inspiration'],['feel'],['avoid'],
+  ['copy'],['media'],['pages'],
+  ['features'],['integrations'],
+  ['domain_status','domain_name'],['maintenance'],
+  ['timeline','hard_deadline'],['budget'],
+  ['competitors'],['differentiation'],
+  ['email','phone','final_notes']
+];
+
+function showReview() {
+  if (!validate(current)) return;
+  const data = gatherAnswers();
+  // also grab other-input values by element id
+  ['q1-other-val','q3-other-val'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el && el.value) data[id+'-value'] = el.value;
+  });
+
+  let html = '';
+  REVIEW_SECS.forEach(sec => {
+    html += `<div class="review-section"><div class="review-section-title">${sec.title}</div>`;
+    for (let i = sec.range[0]; i <= sec.range[1]; i++) {
+      const fields = FIELD_MAP[i]||[];
+      const vals = fields.map(f => data[f]).filter(Boolean).join(' · ');
+      html += `<div class="review-item">
+        <span class="review-q">${Q_LABELS[i]}</span>
+        <span class="review-a ${vals?'':'review-empty'}">${vals||'—'}</span>
+      </div>`;
+    }
+    html += '</div>';
+  });
+
+  document.getElementById('review-body').innerHTML = html;
+  cards[current].classList.remove('active');
+  document.getElementById('review-screen').classList.add('active');
+  document.getElementById('progress-label').textContent = 'Review';
+  document.getElementById('progress-fill').style.width = '98%';
+  document.getElementById('section-badge').textContent = 'Almost done';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function backFromReview() {
+  document.getElementById('review-screen').classList.remove('active');
+  cards[current].classList.add('active');
+  updateUI();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function submitForm() {
+  try { localStorage.removeItem('cq_v2'); } catch(e){}
+  document.getElementById('review-screen').classList.remove('active');
+  document.getElementById('thankyou').classList.add('active');
+  document.getElementById('progress-label').textContent = 'Complete ✓';
+  document.getElementById('progress-fill').style.width = '100%';
+  document.getElementById('section-badge').textContent = '';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ═══ KEYBOARD ═══
+document.addEventListener('keydown', e => {
+  const active = document.querySelector('.question-card.active');
+  if (!active) return;
+  const tag = document.activeElement?.tagName;
+  if (tag==='INPUT'||tag==='TEXTAREA'||tag==='SELECT') return;
+  if (e.key==='ArrowRight') (active.querySelector('.btn-next') || active.querySelector('.btn-submit'))?.click();
+  if (e.key==='ArrowLeft') { const p = active.querySelector('.btn-prev'); if(p&&!p.disabled) p.click(); }
+  if (e.key==='Escape') { if(document.getElementById('a11y-panel').classList.contains('open')) toggleA11y(); }
+});
+
+// ═══ A11Y PANEL ═══
+function toggleA11y() {
+  const panel = document.getElementById('a11y-panel');
+  const btn = document.getElementById('a11y-btn');
+  const open = panel.classList.toggle('open');
+  btn.setAttribute('aria-expanded', open);
+}
+document.addEventListener('click', e => {
+  const panel = document.getElementById('a11y-panel');
+  const btn = document.getElementById('a11y-btn');
+  if (panel.classList.contains('open') && !panel.contains(e.target) && !btn.contains(e.target)) {
+    panel.classList.remove('open'); btn.setAttribute('aria-expanded','false');
+  }
+});
+function setFontSize(v) { document.documentElement.style.fontSize = v+'px'; }
+let contrastOn=false;
+function toggleContrast() {
+  contrastOn=!contrastOn; document.body.classList.toggle('high-contrast',contrastOn);
+  const t=document.getElementById('tog-contrast'); t.classList.toggle('on',contrastOn); t.setAttribute('aria-pressed',contrastOn);
+}
+let motionOff=false;
+function toggleMotion() {
+  motionOff=!motionOff; document.body.classList.toggle('reduce-motion',motionOff);
+  const t=document.getElementById('tog-motion'); t.classList.toggle('on',motionOff); t.setAttribute('aria-pressed',motionOff);
+}
+
+// ═══ INIT ═══
+updateUI();
+restoreProgress();
+</script>
+</body>
+</html>
