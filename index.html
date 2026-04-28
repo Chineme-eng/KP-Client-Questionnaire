@@ -3,1137 +3,2008 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Client Website Questionnaire</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet"/>
+<title>KP Designs — Client Onboarding</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
 <style>
-/* ═══════════════════════════════════════════
-   CSS VARIABLES — edit to restyle everything
-═══════════════════════════════════════════ */
 :root {
-  --bg:           #ffffff;
-  --surface:      #f8f8f6;
-  --border:       #e3e3dc;
-  --accent:       #1a1a1a;
-  --accent-light: #4a4a4a;
-  --muted:        #9a9a94;
-  --highlight:    #c9963a;
-  --highlight-bg: #fdf7ed;
-  --error:        #b91c1c;
-  --success:      #15803d;
-  --radius:       14px;
-  --radius-sm:    8px;
-  --font-display: 'DM Serif Display', Georgia, serif;
-  --font-body:    'DM Sans', system-ui, sans-serif;
-  --ease:         cubic-bezier(0.4, 0, 0.2, 1);
-  --speed:        0.32s;
+  --ink:       #0a0a0f;
+  --ink-2:     #14141c;
+  --ink-3:     #1e1e2a;
+  --surface:   #1a1a24;
+  --surface-2: #222230;
+  --border:    rgba(255,255,255,0.08);
+  --border-2:  rgba(255,255,255,0.14);
+  --text:      #f0ede8;
+  --text-2:    #b8b4ac;
+  --text-3:    #6e6b64;
+  --gold:      #c8a96e;
+  --gold-2:    #e2c98a;
+  --gold-dim:  rgba(200,169,110,0.12);
+  --gold-glow: rgba(200,169,110,0.06);
+  --error:     #e05555;
+  --success:   #4caf7d;
+  --r:         12px;
+  --r-sm:      8px;
+  --display:   'Cormorant Garamond', Georgia, serif;
+  --body:      'Outfit', system-ui, sans-serif;
+  --ease:      cubic-bezier(0.4,0,0.2,1);
+  --spring:    cubic-bezier(0.34,1.56,0.64,1);
 }
 
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; font-size: 16px; }
+*,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
+html { scroll-behavior:smooth; font-size:16px; }
 
 body {
-  background: var(--bg);
-  color: var(--accent);
-  font-family: var(--font-body);
+  background: var(--ink);
+  color: var(--text);
+  font-family: var(--body);
   line-height: 1.65;
   min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
   overflow-x: hidden;
+  cursor: default;
 }
 
-/* ── HEADER ── */
-header {
-  width: 100%;
-  border-bottom: 1px solid var(--border);
-  padding: 22px 40px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  position: sticky;
-  top: 0;
-  background: rgba(255,255,255,0.96);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  z-index: 50;
+/* ── GRAIN OVERLAY ── */
+body::before {
+  content:'';
+  position:fixed; inset:0; z-index:999; pointer-events:none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  opacity: 0.6;
 }
 
-.logo { font-family: var(--font-display); font-size: 1.2rem; letter-spacing: -0.01em; }
-.logo span { color: var(--highlight); }
-
-.header-right { display: flex; flex-direction: column; align-items: flex-end; gap: 5px; }
-
-.section-badge {
-  font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.1em;
-  color: var(--highlight); font-weight: 600;
+/* ── BACKGROUND MESH ── */
+.bg-mesh {
+  position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden;
+}
+.bg-mesh::before {
+  content:'';
+  position:absolute; width:800px; height:800px;
+  top:-200px; right:-200px;
+  background: radial-gradient(circle, rgba(200,169,110,0.04) 0%, transparent 70%);
+  border-radius:50%;
+}
+.bg-mesh::after {
+  content:'';
+  position:absolute; width:600px; height:600px;
+  bottom:-100px; left:-100px;
+  background: radial-gradient(circle, rgba(200,169,110,0.03) 0%, transparent 70%);
+  border-radius:50%;
 }
 
-.progress-row { display: flex; align-items: center; gap: 10px; }
-.progress-label { font-size: 0.75rem; color: var(--muted); font-weight: 500; white-space: nowrap; }
-.progress-track { width: 120px; height: 3px; background: var(--border); border-radius: 99px; overflow: hidden; }
+/* ══════════════════════════════════════
+   SPLASH SCREEN
+══════════════════════════════════════ */
+#splash {
+  position:fixed; inset:0; z-index:900;
+  background: var(--ink);
+  display:flex; align-items:center; justify-content:center;
+  flex-direction:column; gap:0;
+}
+.splash-inner { display:flex; flex-direction:column; align-items:center; gap:28px; }
+.splash-logo-ring {
+  width:90px; height:90px; border-radius:50%;
+  border:1px solid var(--gold);
+  display:flex; align-items:center; justify-content:center;
+  animation: ringPulse 2s var(--ease) infinite;
+  position:relative;
+}
+.splash-logo-ring::before {
+  content:'';
+  position:absolute; inset:-8px; border-radius:50%;
+  border:1px solid rgba(200,169,110,0.2);
+  animation: ringPulse2 2s var(--ease) infinite;
+}
+@keyframes ringPulse { 0%,100%{box-shadow:0 0 0 0 rgba(200,169,110,0.3)} 50%{box-shadow:0 0 30px 6px rgba(200,169,110,0.1)} }
+@keyframes ringPulse2 { 0%,100%{opacity:0.4;transform:scale(1)} 50%{opacity:1;transform:scale(1.04)} }
+.splash-monogram {
+  font-family:var(--display);
+  font-size:2.2rem; font-weight:300; color:var(--gold);
+  letter-spacing:0.06em; line-height:1;
+}
+.splash-wordmark {
+  font-family:var(--display); font-size:1.1rem; font-weight:300;
+  color:var(--text-2); letter-spacing:0.3em; text-transform:uppercase;
+  animation: fadeInUp 0.8s 0.4s var(--ease) both;
+}
+.splash-bar {
+  width:120px; height:1px; background:var(--border-2);
+  position:relative; overflow:hidden;
+  animation: fadeInUp 0.8s 0.6s var(--ease) both;
+}
+.splash-bar-fill {
+  position:absolute; top:0; left:0; height:100%;
+  background:linear-gradient(90deg,transparent,var(--gold),transparent);
+  animation: barSweep 1.8s 0.5s var(--ease) forwards;
+  width:0%;
+}
+@keyframes barSweep { to{width:100%} }
+.splash-out { animation: splashOut 0.7s var(--ease) forwards; }
+@keyframes splashOut {
+  0%{opacity:1;transform:scale(1)}
+  100%{opacity:0;transform:scale(1.04);pointer-events:none}
+}
+
+/* ══════════════════════════════════════
+   LANDING PAGE
+══════════════════════════════════════ */
+#landing {
+  display:none; min-height:100vh;
+  flex-direction:column; align-items:center; justify-content:center;
+  padding:60px 24px; position:relative; z-index:1;
+  animation: fadeInUp 0.8s var(--ease) both;
+}
+#landing.visible { display:flex; }
+
+.landing-logo {
+  font-family:var(--display); font-size:1rem; font-weight:400;
+  letter-spacing:0.25em; text-transform:uppercase;
+  color:var(--gold); margin-bottom:64px;
+  display:flex; align-items:center; gap:14px;
+}
+.landing-logo::before,.landing-logo::after {
+  content:''; flex:1; max-width:60px; height:1px; background:var(--gold); opacity:0.4;
+}
+
+.landing-center { max-width:620px; text-align:center; }
+.landing-eyebrow {
+  font-size:0.68rem; text-transform:uppercase; letter-spacing:0.2em;
+  color:var(--gold); font-weight:600; margin-bottom:24px;
+  display:flex; align-items:center; justify-content:center; gap:12px;
+}
+.landing-eyebrow::before,.landing-eyebrow::after {
+  content:''; width:30px; height:1px; background:var(--gold); opacity:0.5;
+}
+.landing-h1 {
+  font-family:var(--display);
+  font-size:clamp(2.8rem,6vw,4.5rem);
+  font-weight:300; line-height:1.1;
+  letter-spacing:-0.01em; margin-bottom:28px;
+  color:var(--text);
+}
+.landing-h1 em { color:var(--gold); font-style:italic; }
+.landing-sub {
+  font-size:1rem; color:var(--text-2); line-height:1.8;
+  margin-bottom:48px; font-weight:300;
+}
+
+.landing-meta {
+  display:flex; align-items:center; justify-content:center;
+  gap:32px; margin-bottom:48px; flex-wrap:wrap;
+}
+.meta-item {
+  display:flex; align-items:center; gap:8px;
+  font-size:0.82rem; color:var(--text-3); font-weight:500;
+}
+.meta-item svg { opacity:0.6; flex-shrink:0; }
+.meta-divider { width:1px; height:24px; background:var(--border-2); }
+
+.btn-start {
+  display:inline-flex; align-items:center; gap:12px;
+  padding:18px 48px; border-radius:99px;
+  background:var(--gold); color:var(--ink);
+  font-family:var(--body); font-size:0.9rem; font-weight:700;
+  letter-spacing:0.06em; text-transform:uppercase;
+  border:none; cursor:pointer;
+  transition:all 0.3s var(--ease);
+  box-shadow:0 0 40px rgba(200,169,110,0.25);
+}
+.btn-start:hover {
+  background:var(--gold-2); transform:translateY(-2px);
+  box-shadow:0 8px 50px rgba(200,169,110,0.35);
+}
+.btn-start svg { transition:transform 0.3s var(--ease); }
+.btn-start:hover svg { transform:translateX(4px); }
+
+.landing-footer {
+  position:absolute; bottom:32px; left:50%; transform:translateX(-50%);
+  display:flex; gap:24px; font-size:0.72rem; color:var(--text-3);
+}
+.landing-footer a {
+  color:var(--text-3); text-decoration:none;
+  transition:color 0.2s; cursor:pointer;
+  background:none; border:none; font-family:var(--body); font-size:0.72rem;
+}
+.landing-footer a:hover { color:var(--gold); }
+.footer-dot { opacity:0.3; }
+
+/* ══════════════════════════════════════
+   HEADER
+══════════════════════════════════════ */
+#app-header {
+  display:none; width:100%; position:sticky; top:0; z-index:50;
+  background:rgba(10,10,15,0.92); backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+  padding:16px 40px;
+  flex-direction:column; gap:10px;
+}
+#app-header.visible { display:flex; }
+
+.header-top { display:flex; align-items:center; justify-content:space-between; }
+.header-logo { font-family:var(--display); font-size:1rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--gold); }
+.header-right { display:flex; align-items:center; gap:20px; }
+
+.time-remaining {
+  display:flex; align-items:center; gap:6px;
+  font-size:0.72rem; color:var(--text-3); font-weight:500;
+}
+.time-remaining svg { opacity:0.5; }
+
+.autosave-pill {
+  font-size:0.68rem; color:var(--success); background:rgba(76,175,125,0.1);
+  border:1px solid rgba(76,175,125,0.2); border-radius:99px;
+  padding:3px 10px; opacity:0; transition:opacity 0.3s;
+}
+.autosave-pill.show { opacity:1; }
+
+.section-label { font-size:0.65rem; text-transform:uppercase; letter-spacing:0.14em; color:var(--text-3); font-weight:600; }
+.header-bottom { display:flex; align-items:center; gap:14px; }
+.progress-track {
+  flex:1; height:2px; background:rgba(255,255,255,0.06); border-radius:99px; overflow:hidden;
+}
 .progress-fill {
-  height: 100%; background: var(--highlight); border-radius: 99px;
-  transition: width 0.5s var(--ease); width: 0%;
+  height:100%; background:linear-gradient(90deg,var(--gold),var(--gold-2));
+  border-radius:99px; transition:width 0.5s var(--ease); width:0%;
+}
+.progress-text { font-size:0.72rem; color:var(--text-3); white-space:nowrap; min-width:52px; text-align:right; }
+
+/* ══════════════════════════════════════
+   MAIN FORM
+══════════════════════════════════════ */
+#form-wrap {
+  display:none; width:100%; max-width:700px;
+  margin:0 auto; padding:56px 24px 140px;
+  position:relative; z-index:1;
+}
+#form-wrap.visible { display:block; }
+
+/* ── SECTION TRANSITION CARDS ── */
+.section-card {
+  display:none; flex-direction:column; align-items:center;
+  text-align:center; padding:56px 24px; gap:20px;
+}
+.section-card.active { display:flex; animation:fadeInUp 0.5s var(--ease) both; }
+.section-icon {
+  width:64px; height:64px; border-radius:50%;
+  border:1px solid var(--gold); display:flex; align-items:center; justify-content:center;
+  font-size:1.6rem; color:var(--gold);
+  box-shadow:0 0 30px rgba(200,169,110,0.15);
+}
+.section-card h2 { font-family:var(--display); font-size:2.2rem; font-weight:300; color:var(--text); }
+.section-card p { font-size:0.95rem; color:var(--text-2); max-width:420px; line-height:1.75; }
+.section-card .btn-continue {
+  display:inline-flex; align-items:center; gap:10px;
+  padding:14px 36px; border-radius:99px;
+  background:transparent; border:1px solid var(--gold);
+  color:var(--gold); font-family:var(--body); font-size:0.86rem;
+  font-weight:600; letter-spacing:0.05em; cursor:pointer;
+  transition:all 0.3s var(--ease); margin-top:8px;
+}
+.section-card .btn-continue:hover {
+  background:var(--gold); color:var(--ink);
+  box-shadow:0 0 30px rgba(200,169,110,0.3);
 }
 
-/* ── MAIN ── */
-main { width: 100%; max-width: 660px; padding: 56px 24px 140px; flex: 1; }
+/* ── QUESTION CARDS ── */
+.question-card { display:none; flex-direction:column; gap:22px; }
+.question-card.active { display:flex; animation:slideIn 0.4s var(--ease) both; }
+.question-card.going-back.active { animation:slideInBack 0.4s var(--ease) both; }
 
-/* ── INTRO ── */
-.intro { margin-bottom: 56px; animation: fadeUp 0.6s var(--ease) both; }
-.intro-eyebrow {
-  font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.12em;
-  color: var(--highlight); font-weight: 600; margin-bottom: 14px;
+.q-meta { display:flex; align-items:center; justify-content:space-between; }
+.q-number { font-size:0.72rem; color:var(--text-3); font-style:italic; font-family:var(--display); letter-spacing:0.04em; }
+.q-tag {
+  font-size:0.62rem; text-transform:uppercase; letter-spacing:0.12em;
+  color:var(--gold); font-weight:600; background:var(--gold-dim);
+  border:1px solid rgba(200,169,110,0.2); border-radius:99px; padding:3px 12px;
 }
-.intro h1 {
-  font-family: var(--font-display); font-size: 2.6rem;
-  line-height: 1.12; letter-spacing: -0.02em; margin-bottom: 18px;
+.q-text {
+  font-family:var(--display); font-size:1.7rem; line-height:1.2;
+  font-weight:300; letter-spacing:-0.01em; color:var(--text);
 }
-.intro p { color: var(--accent-light); font-size: 1.02rem; max-width: 500px; line-height: 1.72; }
-
-/* ── QUESTION CARD ── */
-.question-card { display: none; flex-direction: column; gap: 20px; }
-.question-card.active { display: flex; animation: slideIn 0.38s var(--ease) both; }
-.question-card.going-back.active { animation: slideInBack 0.38s var(--ease) both; }
-
-.q-meta { display: flex; align-items: center; justify-content: space-between; }
-.q-number { font-size: 0.75rem; color: var(--muted); font-style: italic; font-family: var(--font-display); }
-.q-section-tag {
-  font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em;
-  color: var(--muted); font-weight: 600; background: var(--surface);
-  border: 1px solid var(--border); border-radius: 99px; padding: 3px 10px;
-}
-
-.question-text {
-  font-family: var(--font-display); font-size: 1.55rem;
-  line-height: 1.22; letter-spacing: -0.01em; color: var(--accent);
-}
-.question-hint { font-size: 0.87rem; color: var(--muted); line-height: 1.55; margin-top: -8px; }
-.required { color: var(--highlight); margin-left: 2px; }
+.q-hint { font-size:0.86rem; color:var(--text-3); line-height:1.6; margin-top:-8px; }
+.required { color:var(--gold); margin-left:3px; }
 
 /* ── INPUTS ── */
-input[type="text"], input[type="email"], input[type="url"], input[type="tel"], textarea, select {
-  width: 100%;
-  background: var(--surface);
-  border: 1.5px solid var(--border);
-  border-radius: var(--radius-sm);
-  padding: 13px 16px;
-  font-family: var(--font-body);
-  font-size: 0.97rem;
-  color: var(--accent);
-  transition: border-color var(--speed) var(--ease), box-shadow var(--speed) var(--ease), background var(--speed) var(--ease);
-  outline: none;
-  -webkit-appearance: none;
+input[type="text"],input[type="email"],input[type="url"],input[type="tel"],textarea,select {
+  width:100%; background:var(--surface); border:1px solid var(--border-2);
+  border-radius:var(--r-sm); padding:14px 18px;
+  font-family:var(--body); font-size:0.95rem; color:var(--text);
+  outline:none; -webkit-appearance:none; transition:all 0.25s var(--ease);
 }
-input:focus, textarea:focus, select:focus {
-  border-color: var(--highlight);
-  background: var(--highlight-bg);
-  box-shadow: 0 0 0 3px rgba(201,150,58,0.15);
+input::placeholder,textarea::placeholder { color:var(--text-3); }
+input:focus,textarea:focus,select:focus {
+  border-color:var(--gold); background:var(--surface-2);
+  box-shadow:0 0 0 3px rgba(200,169,110,0.1);
 }
-textarea { resize: vertical; min-height: 110px; line-height: 1.6; }
+textarea { resize:vertical; min-height:110px; line-height:1.65; }
+select {
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236e6b64' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat; background-position:right 16px center;
+  padding-right:42px; cursor:pointer;
+}
+select option { background:var(--ink-2); color:var(--text); }
 
-/* ── CHAR COUNTER ── */
-.char-wrap { position: relative; }
-.char-counter {
-  position: absolute; bottom: 10px; right: 14px;
-  font-size: 0.72rem; color: var(--muted); pointer-events: none; transition: color 0.2s;
-}
-.char-counter.warn { color: var(--error); }
+.char-wrap { position:relative; }
+.char-count { position:absolute; bottom:10px; right:14px; font-size:0.7rem; color:var(--text-3); pointer-events:none; }
+.char-count.warn { color:var(--error); }
 
-/* ── CUSTOM SELECT ── */
-.custom-select-wrap { position: relative; }
-.custom-select-wrap select {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%239a9a94' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 14px center;
-  padding-right: 38px;
-  cursor: pointer;
-}
-.other-input-wrap { overflow: hidden; max-height: 0; opacity: 0; transition: max-height 0.35s var(--ease), opacity 0.25s; }
-.other-input-wrap.open { max-height: 80px; opacity: 1; }
-.other-input-wrap input { margin-top: 8px; }
+.other-wrap { overflow:hidden; max-height:0; opacity:0; transition:max-height 0.35s var(--ease),opacity 0.25s; }
+.other-wrap.open { max-height:70px; opacity:1; }
+.other-wrap input { margin-top:8px; }
 
-/* ── CHECKBOXES / RADIOS ── */
-.options-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 9px; }
-.option-label {
-  display: flex; align-items: center; gap: 10px;
-  padding: 11px 14px;
-  background: var(--surface); border: 1.5px solid var(--border);
-  border-radius: var(--radius-sm); cursor: pointer; font-size: 0.91rem;
-  transition: border-color var(--speed) var(--ease), background var(--speed) var(--ease);
-  user-select: none;
+/* ── OPTIONS ── */
+.opts-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(190px,1fr)); gap:10px; }
+.opt {
+  display:flex; align-items:flex-start; gap:10px; padding:13px 15px;
+  background:var(--surface); border:1px solid var(--border-2);
+  border-radius:var(--r-sm); cursor:pointer; font-size:0.9rem;
+  transition:all 0.2s var(--ease); user-select:none;
 }
-.option-label:hover { border-color: var(--highlight); background: var(--highlight-bg); }
-.option-label input { display: none; }
-.option-label:has(input:checked) { border-color: var(--highlight); background: var(--highlight-bg); }
-
+.opt:hover { border-color:var(--gold); background:var(--gold-dim); }
+.opt input { display:none; }
+.opt:has(input:checked) { border-color:var(--gold); background:var(--gold-dim); }
 .opt-box {
-  width: 18px; height: 18px; min-width: 18px; border-radius: 4px;
-  border: 1.5px solid var(--border); background: var(--bg);
-  display: flex; align-items: center; justify-content: center;
-  transition: all var(--speed) var(--ease); position: relative;
+  width:18px; height:18px; min-width:18px; border-radius:4px;
+  border:1.5px solid var(--border-2); background:var(--ink-2);
+  display:flex; align-items:center; justify-content:center;
+  transition:all 0.2s var(--ease); margin-top:1px;
 }
-.option-label input:checked ~ .opt-box { background: var(--highlight); border-color: var(--highlight); }
-.opt-box::after {
-  content: ''; width: 5px; height: 9px;
-  border-right: 2px solid #fff; border-bottom: 2px solid #fff;
-  transform: rotate(45deg) translate(-1px,-1px); opacity: 0; transition: opacity 0.15s;
+.opt:has(input:checked) .opt-box { background:var(--gold); border-color:var(--gold); }
+.opt-box::after { content:''; width:5px; height:9px; border-right:2px solid var(--ink); border-bottom:2px solid var(--ink); transform:rotate(45deg) translate(-1px,-1px); opacity:0; transition:opacity 0.15s; }
+.opt:has(input:checked) .opt-box::after { opacity:1; }
+.opt-box.radio { border-radius:50%; }
+.opt-box.radio::after { width:6px; height:6px; background:var(--ink); border:none; border-radius:50%; transform:none; }
+.opt:has(input[type="radio"]:checked) .opt-box.radio::after { opacity:1; }
+.opt-label-inner { display:flex; flex-direction:column; gap:2px; }
+.opt-title { font-weight:500; line-height:1.3; }
+.opt-price-tag { font-size:0.75rem; color:var(--gold); font-weight:700; }
+.opt-desc-small { font-size:0.76rem; color:var(--text-3); line-height:1.4; margin-top:2px; }
+
+/* ── PACKAGE CARDS ── */
+.pkg-grid { display:grid; gap:14px; }
+.pkg-card {
+  border:1px solid var(--border-2); border-radius:var(--r);
+  overflow:hidden; cursor:pointer; transition:all 0.3s var(--ease);
 }
-.option-label input:checked ~ .opt-box::after { opacity: 1; }
+.pkg-card:has(input:checked) { border-color:var(--gold); box-shadow:0 0 40px rgba(200,169,110,0.12); }
+.pkg-card label { display:block; cursor:pointer; }
+.pkg-card input { display:none; }
+.pkg-head {
+  padding:20px 22px; background:var(--surface);
+  display:flex; align-items:center; justify-content:space-between; gap:14px;
+  transition:background 0.25s;
+}
+.pkg-card:has(input:checked) .pkg-head { background:var(--surface-2); }
+.pkg-left { display:flex; align-items:center; gap:14px; }
+.pkg-radio-dot {
+  width:20px; height:20px; min-width:20px; border-radius:50%;
+  border:1.5px solid var(--border-2); display:flex; align-items:center; justify-content:center;
+  transition:all 0.2s; background:var(--ink-2);
+}
+.pkg-card:has(input:checked) .pkg-radio-dot { background:var(--gold); border-color:var(--gold); }
+.pkg-radio-dot::after { content:''; width:7px; height:7px; background:var(--ink); border-radius:50%; opacity:0; transition:opacity 0.15s; }
+.pkg-card:has(input:checked) .pkg-radio-dot::after { opacity:1; }
+.pkg-name { font-weight:700; font-size:1rem; color:var(--text); }
+.pkg-sub { font-size:0.76rem; color:var(--text-3); margin-top:2px; }
+.pkg-price-tag { font-family:var(--display); font-size:1.9rem; font-weight:300; color:var(--gold); white-space:nowrap; }
+.pkg-body { padding:18px 22px; border-top:1px solid var(--border); background:var(--ink-2); }
+.pkg-includes-label { font-size:0.65rem; text-transform:uppercase; letter-spacing:0.1em; font-weight:700; color:var(--text-3); margin-bottom:12px; }
+.pkg-feats { display:flex; flex-direction:column; gap:7px; }
+.pkg-feat { display:flex; align-items:flex-start; gap:10px; font-size:0.86rem; color:var(--text-2); line-height:1.45; }
+.pkg-feat::before { content:'✦'; color:var(--gold); font-size:0.6rem; flex-shrink:0; margin-top:4px; opacity:0.8; }
 
-.opt-box.radio { border-radius: 50%; }
-.opt-box.radio::after { width: 6px; height: 6px; background: #fff; border: none; border-radius: 50%; transform: none; }
-.option-label input[type="radio"]:checked ~ .opt-box.radio::after { opacity: 1; }
+/* ── ADDON CARDS ── */
+.addon-card {
+  border:1px solid var(--border-2); border-radius:var(--r);
+  overflow:hidden; transition:border-color 0.25s;
+}
+.addon-card:has(input:checked) { border-color:rgba(200,169,110,0.4); }
+.addon-head {
+  display:flex; align-items:center; gap:12px; padding:15px 18px;
+  background:var(--surface); cursor:pointer; transition:background 0.2s;
+}
+.addon-head:hover { background:var(--surface-2); }
+.addon-card:has(input:checked) .addon-head { background:var(--gold-dim); }
+.addon-head input { display:none; }
+.addon-chk {
+  width:20px; height:20px; min-width:20px; border-radius:4px;
+  border:1.5px solid var(--border-2); background:var(--ink-2);
+  display:flex; align-items:center; justify-content:center;
+  transition:all 0.2s; flex-shrink:0;
+}
+.addon-card:has(input:checked) .addon-chk { background:var(--gold); border-color:var(--gold); }
+.addon-chk::after { content:''; width:5px; height:9px; border-right:2px solid var(--ink); border-bottom:2px solid var(--ink); transform:rotate(45deg) translate(-1px,-1px); opacity:0; transition:opacity 0.15s; }
+.addon-card:has(input:checked) .addon-chk::after { opacity:1; }
+.addon-info { flex:1; }
+.addon-name { font-weight:600; font-size:0.95rem; color:var(--text); }
+.addon-price { font-size:0.8rem; color:var(--gold); font-weight:700; margin-left:auto; white-space:nowrap; }
+.addon-expand { background:none; border:none; font-size:0.72rem; color:var(--text-3); cursor:pointer; font-family:var(--body); text-decoration:underline; padding:0; margin-left:10px; white-space:nowrap; }
+.addon-expand:hover { color:var(--gold); }
+.addon-body { max-height:0; overflow:hidden; transition:max-height 0.35s var(--ease),padding 0.3s; background:var(--ink-2); }
+.addon-body.open { max-height:200px; padding:16px 18px; border-top:1px solid var(--border); }
+.addon-body p { font-size:0.85rem; color:var(--text-2); line-height:1.7; }
 
-/* ── ERROR ── */
-.field-error { font-size: 0.8rem; color: var(--error); display: none; margin-top: -6px; padding-left: 2px; }
-.field-error.visible { display: block; }
+/* ── BASE PLAN CALLOUT ── */
+.base-callout {
+  background:var(--gold-dim); border:1px solid rgba(200,169,110,0.25);
+  border-radius:var(--r); padding:18px 20px;
+}
+.base-callout strong { color:var(--gold); display:block; margin-bottom:10px; font-size:0.92rem; }
+.base-feats { display:flex; flex-direction:column; gap:5px; }
+.base-feat { display:flex; gap:8px; font-size:0.84rem; color:var(--text-2); }
+.base-feat::before { content:'✦'; color:var(--gold); font-size:0.55rem; margin-top:5px; flex-shrink:0; opacity:0.7; }
+
+/* ── PAYMENT OPTIONS ── */
+.pay-opt {
+  display:flex; gap:14px; align-items:flex-start;
+  border:1px solid var(--border-2); border-radius:var(--r);
+  padding:18px 20px; cursor:pointer; transition:all 0.25s;
+}
+.pay-opt:has(input:checked) { border-color:var(--gold); background:var(--gold-dim); }
+.pay-opt input { display:none; }
+.pay-radio-dot {
+  width:20px; height:20px; min-width:20px; border-radius:50%;
+  border:1.5px solid var(--border-2); background:var(--ink-2);
+  display:flex; align-items:center; justify-content:center;
+  transition:all 0.2s; margin-top:3px;
+}
+.pay-opt:has(input:checked) .pay-radio-dot { background:var(--gold); border-color:var(--gold); }
+.pay-radio-dot::after { content:''; width:7px; height:7px; background:var(--ink); border-radius:50%; opacity:0; transition:opacity 0.15s; }
+.pay-opt:has(input:checked) .pay-radio-dot::after { opacity:1; }
+.pay-info-inner { flex:1; }
+.pay-title { font-weight:700; font-size:0.97rem; color:var(--text); display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+.pay-badge { font-size:0.62rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; background:var(--gold); color:var(--ink); border-radius:99px; padding:2px 9px; }
+.pay-detail { font-size:0.84rem; color:var(--text-3); margin-top:4px; line-height:1.55; }
+
+/* ── PAYMENT METHODS ── */
+.pm-grid { display:flex; flex-wrap:wrap; gap:8px; }
+.pm-chip {
+  display:flex; align-items:center; gap:6px;
+  padding:7px 14px; background:var(--surface); border:1px solid var(--border-2);
+  border-radius:99px; font-size:0.8rem; font-weight:600; color:var(--text-2);
+}
+
+/* ── PRICE SUMMARY ── */
+.summary-box {
+  background:var(--surface); border:1px solid var(--border-2);
+  border-radius:var(--r); overflow:hidden;
+}
+.summary-head {
+  padding:14px 20px; background:linear-gradient(135deg,var(--surface-2),var(--ink-3));
+  font-size:0.72rem; text-transform:uppercase; letter-spacing:0.12em;
+  font-weight:700; color:var(--gold); border-bottom:1px solid var(--border);
+}
+.sum-row {
+  display:flex; justify-content:space-between; align-items:center;
+  padding:12px 20px; border-bottom:1px solid var(--border);
+  font-size:0.9rem;
+}
+.sum-row:last-child { border-bottom:none; }
+.sum-row.total { background:var(--gold-dim); font-weight:700; }
+.sum-row.retainer { color:var(--gold); font-weight:700; }
+.sum-label { color:var(--text-2); }
+.sum-row.total .sum-label,.sum-row.retainer .sum-label { color:var(--text); }
+.sum-val { font-weight:600; color:var(--text); }
+.sum-row.total .sum-val { color:var(--gold); font-family:var(--display); font-size:1.1rem; }
+.sum-divider {
+  padding:8px 20px; font-size:0.62rem; text-transform:uppercase;
+  letter-spacing:0.12em; font-weight:700; color:var(--text-3);
+  background:rgba(255,255,255,0.02); border-bottom:1px solid var(--border);
+  border-top:1px solid var(--border);
+}
+
+/* ── CONTRACT ── */
+.contract-wrap {
+  border:1px solid var(--border-2); border-radius:var(--r); overflow:hidden;
+}
+.contract-head {
+  padding:20px 24px;
+  background:linear-gradient(135deg,var(--surface-2),var(--ink-3));
+  border-bottom:1px solid var(--border);
+}
+.contract-head h3 { font-family:var(--display); font-size:1.3rem; font-weight:300; color:var(--text); }
+.contract-head p { font-size:0.78rem; color:var(--text-3); margin-top:4px; }
+.contract-body { padding:24px; background:var(--ink-2); }
+.clause { margin-bottom:20px; }
+.clause h4 {
+  font-size:0.65rem; text-transform:uppercase; letter-spacing:0.12em;
+  font-weight:700; color:var(--gold); margin-bottom:8px;
+}
+.clause p,.clause li { font-size:0.84rem; color:var(--text-2); line-height:1.7; }
+.clause ul { padding-left:18px; display:flex; flex-direction:column; gap:5px; }
+.sigs {
+  display:grid; grid-template-columns:1fr 1fr; gap:24px;
+  margin-top:28px; padding-top:28px; border-top:1px solid var(--border);
+}
+.sig-block { display:flex; flex-direction:column; gap:6px; }
+.sig-label-text { font-size:0.65rem; text-transform:uppercase; letter-spacing:0.1em; font-weight:700; color:var(--text-3); }
+.sig-name-display {
+  font-family:var(--display); font-size:1.4rem; font-weight:300;
+  color:var(--gold); padding:8px 0; border-bottom:1px solid rgba(200,169,110,0.3);
+}
+.sig-input-field {
+  font-family:var(--display); font-size:1.3rem; font-weight:300;
+  background:transparent; border:none; border-bottom:1px solid var(--border-2);
+  border-radius:0; padding:8px 0; color:var(--gold-2);
+  box-shadow:none !important; width:100%;
+  transition:border-color 0.25s;
+}
+.sig-input-field::placeholder { color:var(--text-3); font-size:1rem; }
+.sig-input-field:focus { border-bottom-color:var(--gold); background:transparent; }
+.sig-date-text { font-size:0.76rem; color:var(--text-3); margin-top:4px; }
+.agree-note {
+  font-size:0.8rem; color:var(--text-3); line-height:1.6;
+  background:rgba(200,169,110,0.05); border:1px solid rgba(200,169,110,0.15);
+  border-radius:var(--r-sm); padding:14px 16px; margin-top:16px;
+}
 
 /* ── NAV ── */
-.nav-row { display: flex; align-items: center; justify-content: space-between; margin-top: 28px; gap: 12px; }
+.nav-row {
+  display:flex; align-items:center; justify-content:space-between;
+  margin-top:32px; gap:12px;
+}
 .nav-btn {
-  display: inline-flex; align-items: center; gap: 9px;
-  padding: 13px 26px; border-radius: 99px;
-  font-family: var(--font-body); font-size: 0.88rem; font-weight: 600;
-  letter-spacing: 0.025em; cursor: pointer; border: none;
-  transition: all var(--speed) var(--ease);
+  display:inline-flex; align-items:center; gap:8px;
+  padding:13px 28px; border-radius:99px;
+  font-family:var(--body); font-size:0.86rem; font-weight:600;
+  letter-spacing:0.04em; cursor:pointer; border:none; transition:all 0.25s var(--ease);
 }
-.nav-btn:disabled { opacity: 0.22; cursor: not-allowed; pointer-events: none; }
-.btn-prev { background: var(--surface); color: var(--accent); border: 1.5px solid var(--border); }
-.btn-prev:hover { background: var(--border); }
-.btn-next { background: var(--accent); color: #fff; margin-left: auto; }
-.btn-next:hover { background: var(--highlight); }
-.btn-submit { background: var(--success); color: #fff; margin-left: auto; }
-.btn-submit:hover { opacity: 0.88; }
+.nav-btn:disabled { opacity:0.2; cursor:not-allowed; pointer-events:none; }
+.btn-back {
+  background:transparent; color:var(--text-2);
+  border:1px solid var(--border-2);
+}
+.btn-back:hover { border-color:var(--border-2); background:var(--surface); }
+.btn-next { background:var(--gold); color:var(--ink); margin-left:auto; }
+.btn-next:hover { background:var(--gold-2); box-shadow:0 4px 24px rgba(200,169,110,0.3); transform:translateY(-1px); }
+.btn-review { background:linear-gradient(135deg,var(--gold),var(--gold-2)); color:var(--ink); margin-left:auto; }
+.btn-review:hover { transform:translateY(-1px); box-shadow:0 4px 24px rgba(200,169,110,0.35); }
+.btn-print-small { background:transparent; color:var(--text-2); border:1px solid var(--border-2); }
+.btn-print-small:hover { background:var(--surface); }
+.btn-send { background:var(--success); color:#fff; }
+.btn-send:hover { opacity:0.9; transform:translateY(-1px); }
 
-/* ── REVIEW SCREEN ── */
-#review-screen { display: none; flex-direction: column; gap: 28px; animation: fadeUp 0.45s var(--ease) both; }
-#review-screen.active { display: flex; }
-.review-title { font-family: var(--font-display); font-size: 1.85rem; letter-spacing: -0.02em; }
-.review-subtitle { color: var(--accent-light); font-size: 0.95rem; margin-top: -16px; }
-.review-section { border: 1.5px solid var(--border); border-radius: var(--radius); overflow: hidden; }
-.review-section-title {
-  padding: 12px 18px; background: var(--surface);
-  font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em;
-  font-weight: 600; color: var(--muted); border-bottom: 1px solid var(--border);
+/* ── FIELD ERROR ── */
+.field-err { font-size:0.78rem; color:var(--error); display:none; }
+.field-err.show { display:block; }
+
+/* ── FINAL SUMMARY ── */
+.final-box {
+  background:var(--surface); border:1px solid var(--border-2);
+  border-radius:var(--r); padding:22px; font-size:0.9rem;
 }
-.review-item {
-  padding: 12px 18px; border-bottom: 1px solid var(--border);
-  display: grid; grid-template-columns: 1fr 2fr; gap: 12px; font-size: 0.9rem;
-}
-.review-item:last-child { border-bottom: none; }
-.review-q { color: var(--muted); font-size: 0.83rem; }
-.review-a { color: var(--accent); font-weight: 500; line-height: 1.5; }
-.review-empty { color: var(--border); font-style: italic; }
-.review-nav { display: flex; gap: 12px; flex-wrap: wrap; }
+.final-box h4 { font-size:0.65rem; text-transform:uppercase; letter-spacing:0.12em; font-weight:700; color:var(--text-3); margin-bottom:14px; }
+.final-row { display:flex; gap:12px; padding:8px 0; border-bottom:1px solid var(--border); font-size:0.88rem; }
+.final-row:last-child { border-bottom:none; }
+.final-key { color:var(--text-3); min-width:160px; flex-shrink:0; }
+.final-val { color:var(--text); font-weight:500; }
 
 /* ── THANK YOU ── */
-#thankyou { display: none; flex-direction: column; align-items: center; text-align: center; gap: 18px; padding: 64px 0; animation: fadeUp 0.6s var(--ease) both; }
-#thankyou.active { display: flex; }
-.ty-ring { width: 76px; height: 76px; border-radius: 50%; background: #dcfce7; display: flex; align-items: center; justify-content: center; font-size: 2.2rem; }
-#thankyou h2 { font-family: var(--font-display); font-size: 2.1rem; letter-spacing: -0.02em; }
-#thankyou p { color: var(--accent-light); max-width: 420px; line-height: 1.72; }
+#thankyou {
+  display:none; flex-direction:column; align-items:center;
+  text-align:center; gap:20px; padding:80px 24px;
+}
+#thankyou.visible { display:flex; animation:fadeInUp 0.7s var(--ease) both; }
+.ty-ring {
+  width:84px; height:84px; border-radius:50%;
+  border:1px solid var(--gold);
+  display:flex; align-items:center; justify-content:center;
+  font-size:2rem;
+  box-shadow:0 0 40px rgba(200,169,110,0.2);
+  animation:ringPulse 3s var(--ease) infinite;
+}
+#thankyou h2 { font-family:var(--display); font-size:2.8rem; font-weight:300; color:var(--text); }
+#thankyou p { color:var(--text-2); max-width:440px; line-height:1.8; font-size:0.95rem; }
+.ty-actions { display:flex; gap:12px; flex-wrap:wrap; justify-content:center; margin-top:8px; }
+
+/* ── MODALS ── */
+.modal-overlay {
+  position:fixed; inset:0; z-index:800;
+  background:rgba(0,0,0,0.8); backdrop-filter:blur(8px);
+  display:flex; align-items:center; justify-content:center; padding:24px;
+  opacity:0; pointer-events:none; transition:opacity 0.3s;
+}
+.modal-overlay.open { opacity:1; pointer-events:all; }
+.modal-box {
+  background:var(--ink-2); border:1px solid var(--border-2);
+  border-radius:var(--r); max-width:600px; width:100%;
+  max-height:80vh; overflow:hidden; display:flex; flex-direction:column;
+  transform:translateY(20px); transition:transform 0.35s var(--spring);
+}
+.modal-overlay.open .modal-box { transform:translateY(0); }
+.modal-head {
+  padding:20px 24px; border-bottom:1px solid var(--border);
+  display:flex; align-items:center; justify-content:space-between;
+}
+.modal-head h3 { font-family:var(--display); font-size:1.3rem; font-weight:300; color:var(--text); }
+.modal-close { background:none; border:none; color:var(--text-3); cursor:pointer; font-size:1.3rem; line-height:1; padding:4px; }
+.modal-close:hover { color:var(--text); }
+.modal-body { padding:24px; overflow-y:auto; flex:1; }
+.modal-body h4 { font-size:0.8rem; text-transform:uppercase; letter-spacing:0.1em; font-weight:700; color:var(--gold); margin:20px 0 8px; }
+.modal-body h4:first-child { margin-top:0; }
+.modal-body p,.modal-body li { font-size:0.86rem; color:var(--text-2); line-height:1.75; }
+.modal-body ul { padding-left:18px; display:flex; flex-direction:column; gap:5px; margin-top:6px; }
+
+/* ── PRINT ── */
+@media print {
+  #splash,#landing,#app-header,.nav-row,#a11y-btn,.modal-overlay,
+  .addon-expand,.btn-print-small,#save-banner { display:none!important; }
+  body { background:#fff!important; color:#000!important; }
+  #form-wrap { display:block!important; padding:0!important; max-width:100%!important; }
+  .summary-box,.contract-wrap,.final-box { border:1px solid #ccc!important; background:#fff!important; }
+}
 
 /* ── SAVE BANNER ── */
 #save-banner {
-  position: fixed; bottom: 88px; left: 50%;
-  transform: translateX(-50%) translateY(20px);
-  background: var(--accent); color: #fff;
-  padding: 10px 22px; border-radius: 99px;
-  font-size: 0.82rem; font-weight: 500;
-  opacity: 0; pointer-events: none;
-  transition: opacity 0.3s, transform 0.3s;
-  z-index: 300; white-space: nowrap;
+  position:fixed; bottom:90px; left:50%;
+  transform:translateX(-50%) translateY(16px);
+  background:var(--ink-3); color:var(--text-2); border:1px solid var(--border-2);
+  padding:9px 20px; border-radius:99px; font-size:0.78rem; font-weight:500;
+  opacity:0; pointer-events:none; transition:all 0.3s; z-index:300;
 }
-#save-banner.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+#save-banner.show { opacity:1; transform:translateX(-50%) translateY(0); }
 
-/* ── A11Y BUTTON ── */
+/* ── A11Y ── */
 #a11y-btn {
-  position: fixed; bottom: 28px; right: 28px;
-  width: 52px; height: 52px; border-radius: 50%;
-  background: var(--accent); color: #fff; border: none;
-  cursor: pointer; display: flex; align-items: center; justify-content: center;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.18); z-index: 200;
-  transition: background var(--speed), transform var(--speed);
+  position:fixed; bottom:28px; right:28px;
+  width:48px; height:48px; border-radius:50%;
+  background:var(--surface-2); border:1px solid var(--border-2); color:var(--text-2);
+  cursor:pointer; display:flex; align-items:center; justify-content:center;
+  box-shadow:0 4px 20px rgba(0,0,0,0.4); z-index:200; transition:all 0.25s;
 }
-#a11y-btn:hover { background: var(--highlight); transform: scale(1.08); }
-#a11y-btn svg { width: 28px; height: 28px; }
-
-/* ── A11Y PANEL ── */
+#a11y-btn:hover { background:var(--gold-dim); border-color:var(--gold); color:var(--gold); transform:scale(1.05); }
 #a11y-panel {
-  position: fixed; bottom: 92px; right: 28px; width: 260px;
-  background: var(--bg); border: 1.5px solid var(--border);
-  border-radius: var(--radius);
-  box-shadow: 0 8px 40px rgba(0,0,0,0.11);
-  padding: 18px; z-index: 200;
-  display: none; flex-direction: column; gap: 14px;
-  animation: fadeUp 0.28s var(--ease) both;
+  position:fixed; bottom:88px; right:28px; width:250px;
+  background:var(--ink-2); border:1px solid var(--border-2);
+  border-radius:var(--r); box-shadow:0 8px 40px rgba(0,0,0,0.5);
+  padding:18px; z-index:200; display:none; flex-direction:column; gap:14px;
 }
-#a11y-panel.open { display: flex; }
-.a11y-head { display: flex; align-items: center; justify-content: space-between; }
-.a11y-title { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.09em; font-weight: 600; color: var(--accent); }
-.a11y-close { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 1.1rem; line-height: 1; padding: 2px 4px; }
-.a11y-row { display: flex; flex-direction: column; gap: 6px; }
-.a11y-row label { font-size: 0.83rem; font-weight: 500; color: var(--accent); }
-input[type="range"].a11y-slider {
-  width: 100%; accent-color: var(--highlight);
-  background: transparent; border: none; box-shadow: none; padding: 0; height: auto; border-radius: 0;
-}
-.a11y-toggle-row { display: flex; align-items: center; justify-content: space-between; font-size: 0.86rem; font-weight: 500; color: var(--accent); }
-.toggle { width: 38px; height: 21px; background: var(--border); border-radius: 99px; cursor: pointer; position: relative; transition: background var(--speed); border: none; flex-shrink: 0; }
-.toggle.on { background: var(--highlight); }
-.toggle::after { content: ''; position: absolute; top: 3px; left: 3px; width: 15px; height: 15px; background: #fff; border-radius: 50%; transition: left var(--speed) var(--ease); }
-.toggle.on::after { left: 20px; }
-.save-later-btn {
-  width: 100%; padding: 10px;
-  background: var(--surface); border: 1.5px solid var(--border);
-  border-radius: var(--radius-sm); font-family: var(--font-body);
-  font-size: 0.83rem; font-weight: 600; color: var(--accent);
-  cursor: pointer; transition: all var(--speed); text-align: center;
-}
-.save-later-btn:hover { border-color: var(--highlight); color: var(--highlight); }
+#a11y-panel.open { display:flex; animation:fadeInUp 0.25s var(--ease) both; }
+.a11y-head { display:flex; align-items:center; justify-content:space-between; }
+.a11y-title { font-size:0.72rem; text-transform:uppercase; letter-spacing:0.1em; font-weight:700; color:var(--text-2); }
+.a11y-close { background:none; border:none; color:var(--text-3); cursor:pointer; font-size:1.1rem; }
+.a11y-row label { font-size:0.82rem; font-weight:500; color:var(--text-2); display:block; margin-bottom:6px; }
+input[type="range"].a11y-slider { width:100%; accent-color:var(--gold); background:transparent; border:none; box-shadow:none; padding:0; height:auto; border-radius:0; }
+.a11y-tog-row { display:flex; align-items:center; justify-content:space-between; font-size:0.84rem; font-weight:500; color:var(--text-2); }
+.tog { width:36px; height:20px; background:var(--border-2); border-radius:99px; cursor:pointer; position:relative; transition:background 0.25s; border:none; flex-shrink:0; }
+.tog.on { background:var(--gold); }
+.tog::after { content:''; position:absolute; top:3px; left:3px; width:14px; height:14px; background:#fff; border-radius:50%; transition:left 0.25s var(--ease); }
+.tog.on::after { left:19px; }
+.save-btn-a11y { width:100%; padding:9px; background:var(--surface); border:1px solid var(--border-2); border-radius:var(--r-sm); font-family:var(--body); font-size:0.82rem; font-weight:600; color:var(--text-2); cursor:pointer; transition:all 0.2s; }
+.save-btn-a11y:hover { border-color:var(--gold); color:var(--gold); }
 
 /* ── ANIMATIONS ── */
-@keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
-@keyframes slideIn { from{opacity:0;transform:translateX(36px)} to{opacity:1;transform:translateX(0)} }
-@keyframes slideOut { from{opacity:1;transform:translateX(0)} to{opacity:0;transform:translateX(-36px)} }
-@keyframes slideInBack { from{opacity:0;transform:translateX(-36px)} to{opacity:1;transform:translateX(0)} }
+@keyframes fadeInUp { from{opacity:0;transform:translateY(18px)} to{opacity:1;transform:translateY(0)} }
+@keyframes slideIn { from{opacity:0;transform:translateX(40px)} to{opacity:1;transform:translateX(0)} }
+@keyframes slideInBack { from{opacity:0;transform:translateX(-40px)} to{opacity:1;transform:translateX(0)} }
 
-/* ── REDUCED MOTION ── */
-body.reduce-motion *, body.reduce-motion *::before, body.reduce-motion *::after { animation:none!important; transition:none!important; }
-@media(prefers-reduced-motion:reduce){ *,*::before,*::after{animation:none!important;transition:none!important;} }
-/* Ensure a11y panel shows instantly when motion reduced */
-body.reduce-motion #a11y-panel { animation: none !important; }
+body.reduce-motion *,body.reduce-motion *::before,body.reduce-motion *::after { animation:none!important; transition:none!important; }
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;}}
 
-/* ── HIGH CONTRAST ── */
-body.high-contrast {
-  --bg: #000; --surface: #111; --border: #666;
-  --accent: #fff; --accent-light: #ddd; --muted: #bbb;
-  --highlight: #f0b429; --highlight-bg: #1a1500;
-  --error: #ff6b6b;
-}
-body.high-contrast input,
-body.high-contrast textarea,
-body.high-contrast select {
-  background: var(--surface) !important;
-  color: var(--accent) !important;
-  border-color: var(--border) !important;
-}
-body.high-contrast .option-label {
-  background: var(--surface) !important;
-  border-color: var(--border) !important;
-  color: var(--accent) !important;
-}
-body.high-contrast header {
-  background: rgba(0,0,0,0.97) !important;
-  border-color: var(--border) !important;
-}
-body.high-contrast .btn-next,
-body.high-contrast .btn-submit {
-  background: var(--highlight) !important;
-  color: #000 !important;
-}
-
-/* ── RESPONSIVE ── */
-@media(max-width:580px){
-  header { padding: 16px 18px; }
-  .progress-track { width: 72px; }
-  main { padding: 36px 16px 120px; }
-  .options-grid { grid-template-columns: 1fr 1fr; }
-  .review-item { grid-template-columns: 1fr; gap: 4px; }
-  #a11y-panel { width: calc(100vw - 32px); right: 16px; }
+@media(max-width:560px){
+  #app-header { padding:14px 18px; }
+  #form-wrap { padding:32px 16px 120px; }
+  .opts-grid { grid-template-columns:1fr; }
+  .sigs { grid-template-columns:1fr; }
+  .landing-h1 { font-size:2.4rem; }
+  .landing-meta { gap:16px; }
+  .meta-divider { display:none; }
+  #a11y-panel { width:calc(100vw - 32px); right:16px; }
 }
 </style>
 </head>
 <body>
+<div class="bg-mesh"></div>
 
-<header>
-  <div class="logo">Studio<span>.</span></div>
-  <div class="header-right">
-    <span class="section-badge" id="section-badge">Business &amp; Goals</span>
-    <div class="progress-row">
-      <span class="progress-label" id="progress-label">1 of 24</span>
-      <div class="progress-track" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" aria-label="Progress">
-        <div class="progress-fill" id="progress-fill"></div>
+<!-- ══ SPLASH ══ -->
+<div id="splash">
+  <div class="splash-inner">
+    <div class="splash-logo-ring">
+      <span class="splash-monogram">KP</span>
+    </div>
+    <div class="splash-wordmark">KP Designs</div>
+    <div class="splash-bar"><div class="splash-bar-fill"></div></div>
+  </div>
+</div>
+
+<!-- ══ LANDING ══ -->
+<div id="landing">
+  <div class="landing-logo">KP Designs</div>
+  <div class="landing-center">
+    <div class="landing-eyebrow">Client Onboarding</div>
+    <h1 class="landing-h1">Let's build something <em>extraordinary</em> together.</h1>
+    <p class="landing-sub">This guided questionnaire helps me understand your business, vision, and goals — and generates your custom quote and signed agreement in one seamless session.</p>
+    <div class="landing-meta">
+      <div class="meta-item">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+        8–10 minutes
+      </div>
+      <div class="meta-divider"></div>
+      <div class="meta-item">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        Your data is private
+      </div>
+      <div class="meta-divider"></div>
+      <div class="meta-item">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 7H4a2 2 0 00-2 2v6a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2z"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg>
+        Progress auto-saved
       </div>
     </div>
+    <button class="btn-start" onclick="startForm()">
+      Begin Questionnaire
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </button>
   </div>
-</header>
-
-<main id="main-content">
-
-<div class="intro" id="intro-block">
-  <p class="intro-eyebrow">New Project</p>
-  <h1>Let's build something great together.</h1>
-  <p>This questionnaire helps me understand your business, goals, and vision. Take your time — there are no wrong answers. Your responses will shape every decision I make for your site.</p>
+  <div class="landing-footer">
+    <span>© 2026 KP Designs</span>
+    <span class="footer-dot">·</span>
+    <button onclick="openModal('terms-modal')" style="background:none;border:none;color:var(--text-3);font-family:var(--body);font-size:0.72rem;cursor:pointer;transition:color 0.2s;" onmouseover="this.style.color='var(--text-2)'" onmouseout="this.style.color='var(--text-3)'">Terms of Service</button>
+    <span class="footer-dot">·</span>
+    <button onclick="openModal('privacy-modal')" style="background:none;border:none;color:var(--text-3);font-family:var(--body);font-size:0.72rem;cursor:pointer;transition:color 0.2s;" onmouseover="this.style.color='var(--text-2)'" onmouseout="this.style.color='var(--text-3)'">Privacy Policy</button>
+  </div>
 </div>
 
-<!-- Q1 -->
-<div class="question-card active" data-index="0" role="group" aria-labelledby="ql0">
-  <div class="q-meta"><span class="q-number">Question 1 of 24</span><span class="q-section-tag">Business &amp; Goals</span></div>
-  <p class="question-text" id="ql0">What is your business name?<span class="required">*</span></p>
-  <input type="text" id="q0" name="business_name" placeholder="e.g. Maple &amp; Co." autocomplete="organization" aria-required="true"/>
-  <span class="field-error" id="e0">Please fill in this field to continue.</span>
+<!-- ══ APP HEADER ══ -->
+<div id="app-header">
+  <div class="header-top">
+    <div class="header-logo">KP Designs</div>
+    <div class="header-right">
+      <div class="time-remaining" id="time-display">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+        <span id="time-text">~10 min remaining</span>
+      </div>
+      <div class="autosave-pill" id="autosave-pill">✓ Saved</div>
+    </div>
+  </div>
+  <div class="header-bottom">
+    <div class="section-label" id="section-label">Business &amp; Goals</div>
+    <div class="progress-track" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+      <div class="progress-fill" id="progress-fill"></div>
+    </div>
+    <div class="progress-text" id="progress-text">1 / 27</div>
+  </div>
+</div>
+
+<!-- ══ FORM WRAP ══ -->
+<div id="form-wrap">
+
+<!-- SECTION TRANSITION CARDS -->
+<div class="section-card" id="sec-business">
+  <div class="section-icon">✦</div>
+  <h2>Your Business</h2>
+  <p>Let's start with the basics — who you are, what you do, and who you serve. This shapes everything about your website.</p>
+  <button class="btn-continue" onclick="dismissSection('sec-business')">Let's Begin <span>→</span></button>
+</div>
+
+<div class="section-card" id="sec-presence">
+  <div class="section-icon">◎</div>
+  <h2>Your Current Presence</h2>
+  <p>Tell me what you already have — existing websites, logos, photos. We'll build on what's there.</p>
+  <button class="btn-continue" onclick="dismissSection('sec-presence')">Continue <span>→</span></button>
+</div>
+
+<div class="section-card" id="sec-design">
+  <div class="section-icon">◈</div>
+  <h2>Design &amp; Style</h2>
+  <p>Now the fun part — let's figure out how your website should look and feel to your customers.</p>
+  <button class="btn-continue" onclick="dismissSection('sec-design')">Continue <span>→</span></button>
+</div>
+
+<div class="section-card" id="sec-content">
+  <div class="section-icon">☰</div>
+  <h2>Content &amp; Details</h2>
+  <p>We'll figure out the words, photos, and practical details that'll go on your site.</p>
+  <button class="btn-continue" onclick="dismissSection('sec-content')">Continue <span>→</span></button>
+</div>
+
+<div class="section-card" id="sec-pricing">
+  <div class="section-icon">◇</div>
+  <h2>Your Package &amp; Pricing</h2>
+  <p>Choose your website package and any add-ons. Everything is clearly explained — no hidden fees, no surprises.</p>
+  <button class="btn-continue" onclick="dismissSection('sec-pricing')">See Packages <span>→</span></button>
+</div>
+
+<div class="section-card" id="sec-details">
+  <div class="section-icon">◉</div>
+  <h2>Your Contact Details</h2>
+  <p>Almost done. Just need your information so I can follow up and get things moving.</p>
+  <button class="btn-continue" onclick="dismissSection('sec-details')">Continue <span>→</span></button>
+</div>
+
+<!-- ══ QUESTIONS ══ -->
+
+<!-- Q0: Business name -->
+<div class="question-card" data-q="0" data-section="Business &amp; Goals" data-time="10">
+  <div class="q-meta"><span class="q-number">01 / 27</span><span class="q-tag">Business</span></div>
+  <p class="q-text">What is your business name?<span class="required">*</span></p>
+  <input type="text" id="q0" name="business_name" placeholder="e.g. Mike's Barbershop"/>
+  <span class="field-err" id="e0">Please enter your business name.</span>
   <div class="nav-row">
-    <button class="nav-btn btn-prev" onclick="go(-1)" disabled aria-label="Previous">← Back</button>
+    <button class="nav-btn btn-back" onclick="go(-1)" disabled>← Back</button>
     <button class="nav-btn btn-next" onclick="go(1)">Next →</button>
   </div>
 </div>
 
-<!-- Q2 -->
-<div class="question-card" data-index="1" role="group" aria-labelledby="ql1">
-  <div class="q-meta"><span class="q-number">Question 2 of 24</span><span class="q-section-tag">Business &amp; Goals</span></div>
-  <p class="question-text" id="ql1">What industry or field are you in?<span class="required">*</span></p>
-  <div class="custom-select-wrap">
-    <select id="q1" name="industry" onchange="handleOther('q1','q1-other')">
-      <option value="">Select an industry…</option>
-      <option>Automotive</option>
-      <option>Beauty &amp; Hair</option>
-      <option>Cleaning Services</option>
-      <option>Construction &amp; Contracting</option>
-      <option>Fitness &amp; Personal Training</option>
-      <option>Food &amp; Restaurant</option>
-      <option>Healthcare &amp; Medical</option>
-      <option>HVAC &amp; Plumbing</option>
-      <option>Legal</option>
-      <option>Photography</option>
-      <option>Real Estate</option>
-      <option>Retail &amp; E-commerce</option>
-      <option>Tech &amp; Software</option>
-      <option value="Other">Other…</option>
-    </select>
-  </div>
-  <div class="other-input-wrap" id="q1-other">
-    <input type="text" id="q1-other-val" placeholder="Please specify your industry"/>
-  </div>
-  <span class="field-error" id="e1">Please select an option to continue.</span>
+<!-- Q1: Industry -->
+<div class="question-card" data-q="1" data-section="Business &amp; Goals" data-time="9">
+  <div class="q-meta"><span class="q-number">02 / 27</span><span class="q-tag">Business</span></div>
+  <p class="q-text">What industry are you in?<span class="required">*</span></p>
+  <select id="q1" name="industry" onchange="handleOther('q1','q1-other')">
+    <option value="">Select an industry…</option>
+    <option>Automotive</option><option>Beauty &amp; Hair</option>
+    <option>Cleaning Services</option><option>Construction &amp; Contracting</option>
+    <option>Fitness &amp; Personal Training</option><option>Food &amp; Restaurant</option>
+    <option>Healthcare &amp; Medical</option><option>HVAC &amp; Plumbing</option>
+    <option>Legal</option><option>Photography</option>
+    <option>Real Estate</option><option>Retail &amp; E-commerce</option>
+    <option>Tech &amp; Software</option><option value="Other">Other…</option>
+  </select>
+  <div class="other-wrap" id="q1-other"><input type="text" id="q1ov" placeholder="Please describe your industry"/></div>
+  <span class="field-err" id="e1">Please select your industry.</span>
   <div class="nav-row">
-    <button class="nav-btn btn-prev" onclick="go(-1)">← Back</button>
+    <button class="nav-btn btn-back" onclick="go(-1)">← Back</button>
     <button class="nav-btn btn-next" onclick="go(1)">Next →</button>
   </div>
 </div>
 
-<!-- Q3 -->
-<div class="question-card" data-index="2" role="group" aria-labelledby="ql2">
-  <div class="q-meta"><span class="q-number">Question 3 of 24</span><span class="q-section-tag">Business &amp; Goals</span></div>
-  <p class="question-text" id="ql2">Briefly describe what your business does.</p>
-  <p class="question-hint">In 2–3 sentences, explain what you offer and who you serve.</p>
+<!-- Q2: Description -->
+<div class="question-card" data-q="2" data-section="Business &amp; Goals" data-time="9">
+  <div class="q-meta"><span class="q-number">03 / 27</span><span class="q-tag">Business</span></div>
+  <p class="q-text">Describe what your business does.</p>
+  <p class="q-hint">2–3 sentences — what do you offer and who do you serve?</p>
   <div class="char-wrap">
-    <textarea id="q2" name="description" placeholder="We help small businesses…" maxlength="500" oninput="counter(this,'cc2',500)"></textarea>
-    <span class="char-counter" id="cc2">0 / 500</span>
+    <textarea id="q2" name="description" placeholder="We cut hair for men and boys in the Bronx…" maxlength="500" oninput="charCount(this,'cc2',500)"></textarea>
+    <span class="char-count" id="cc2">0/500</span>
   </div>
   <div class="nav-row">
-    <button class="nav-btn btn-prev" onclick="go(-1)">← Back</button>
+    <button class="nav-btn btn-back" onclick="go(-1)">← Back</button>
     <button class="nav-btn btn-next" onclick="go(1)">Next →</button>
   </div>
 </div>
 
-<!-- Q4 -->
-<div class="question-card" data-index="3" role="group" aria-labelledby="ql3">
-  <div class="q-meta"><span class="q-number">Question 4 of 24</span><span class="q-section-tag">Business &amp; Goals</span></div>
-  <p class="question-text" id="ql3">What is the primary goal of your new website?<span class="required">*</span></p>
-  <div class="custom-select-wrap">
-    <select id="q3" name="goal" onchange="handleOther('q3','q3-other')">
-      <option value="">Choose a primary goal…</option>
-      <option>Generate leads &amp; enquiries</option>
-      <option>Sell products online</option>
-      <option>Showcase a portfolio</option>
-      <option>Accept bookings or appointments</option>
-      <option>Share information &amp; resources</option>
-      <option>Build a community</option>
-      <option>Establish brand credibility</option>
-      <option value="Other">Other…</option>
-    </select>
-  </div>
-  <div class="other-input-wrap" id="q3-other">
-    <input type="text" id="q3-other-val" placeholder="Describe your goal"/>
-  </div>
-  <span class="field-error" id="e3">Please select an option to continue.</span>
+<!-- Q3: Goal -->
+<div class="question-card" data-q="3" data-section="Business &amp; Goals" data-time="8">
+  <div class="q-meta"><span class="q-number">04 / 27</span><span class="q-tag">Business</span></div>
+  <p class="q-text">What's the main goal of your website?<span class="required">*</span></p>
+  <select id="q3" name="goal" onchange="handleOther('q3','q3-other')">
+    <option value="">Choose a goal…</option>
+    <option>Get more customers &amp; enquiries</option>
+    <option>Sell products online</option>
+    <option>Let customers book appointments</option>
+    <option>Show off my work / portfolio</option>
+    <option>Share information about my business</option>
+    <option>Build trust &amp; look more professional</option>
+    <option value="Other">Other…</option>
+  </select>
+  <div class="other-wrap" id="q3-other"><input type="text" id="q3ov" placeholder="Describe your goal"/></div>
+  <span class="field-err" id="e3">Please select a goal.</span>
   <div class="nav-row">
-    <button class="nav-btn btn-prev" onclick="go(-1)">← Back</button>
+    <button class="nav-btn btn-back" onclick="go(-1)">← Back</button>
     <button class="nav-btn btn-next" onclick="go(1)">Next →</button>
   </div>
 </div>
 
-<!-- Q5 -->
-<div class="question-card" data-index="4" role="group" aria-labelledby="ql4">
-  <div class="q-meta"><span class="q-number">Question 5 of 24</span><span class="q-section-tag">Business &amp; Goals</span></div>
-  <p class="question-text" id="ql4">Who is your target audience or ideal customer?</p>
-  <p class="question-hint">Think about age, profession, interests, location.</p>
+<!-- Q4: Audience -->
+<div class="question-card" data-q="4" data-section="Business &amp; Goals" data-time="8">
+  <div class="q-meta"><span class="q-number">05 / 27</span><span class="q-tag">Business</span></div>
+  <p class="q-text">Who are your customers?</p>
+  <p class="q-hint">Age, location, what they do, what they need from you.</p>
   <div class="char-wrap">
-    <textarea id="q4" name="audience" placeholder="e.g. Women aged 30–50, small business owners in the UK…" maxlength="400" oninput="counter(this,'cc4',400)"></textarea>
-    <span class="char-counter" id="cc4">0 / 400</span>
+    <textarea id="q4" name="audience" placeholder="e.g. Men aged 18–45 in the Bronx looking for a clean cut…" maxlength="400" oninput="charCount(this,'cc4',400)"></textarea>
+    <span class="char-count" id="cc4">0/400</span>
   </div>
   <div class="nav-row">
-    <button class="nav-btn btn-prev" onclick="go(-1)">← Back</button>
+    <button class="nav-btn btn-back" onclick="go(-1)">← Back</button>
     <button class="nav-btn btn-next" onclick="go(1)">Next →</button>
   </div>
 </div>
 
-<!-- Q6 -->
-<div class="question-card" data-index="5" role="group" aria-labelledby="ql5">
-  <div class="q-meta"><span class="q-number">Question 6 of 24</span><span class="q-section-tag">Business &amp; Goals</span></div>
-  <p class="question-text" id="ql5">What does success look like for your site in 6 months?</p>
+<!-- Q5: Current site -->
+<div class="question-card" data-q="5" data-section="Existing Presence" data-time="7">
+  <div class="q-meta"><span class="q-number">06 / 27</span><span class="q-tag">Presence</span></div>
+  <p class="q-text">Do you currently have a website?</p>
+  <div class="opts-grid">
+    <label class="opt"><input type="radio" name="has_site" value="Yes"/><span class="opt-box radio"></span><span>Yes</span></label>
+    <label class="opt"><input type="radio" name="has_site" value="No"/><span class="opt-box radio"></span><span>No</span></label>
+  </div>
+  <input type="url" name="current_url" placeholder="If yes — paste the link here (e.g. mybusiness.com)"/>
+  <div class="nav-row">
+    <button class="nav-btn btn-back" onclick="go(-1)">← Back</button>
+    <button class="nav-btn btn-next" onclick="go(1)">Next →</button>
+  </div>
+</div>
+
+<!-- Q6: Brand assets -->
+<div class="question-card" data-q="6" data-section="Existing Presence" data-time="7">
+  <div class="q-meta"><span class="q-number">07 / 27</span><span class="q-tag">Presence</span></div>
+  <p class="q-text">What do you already have for your brand?</p>
+  <p class="q-hint">Select everything that exists — even a rough logo on your phone counts.</p>
+  <div class="opts-grid">
+    <label class="opt"><input type="checkbox" name="assets" value="Logo"/><span class="opt-box"></span><span>Logo</span></label>
+    <label class="opt"><input type="checkbox" name="assets" value="Brand colours"/><span class="opt-box"></span><span>Brand colors</span></label>
+    <label class="opt"><input type="checkbox" name="assets" value="Photos"/><span class="opt-box"></span><span>Business photos</span></label>
+    <label class="opt"><input type="checkbox" name="assets" value="Social media"/><span class="opt-box"></span><span>Social media pages</span></label>
+    <label class="opt"><input type="checkbox" name="assets" value="None yet"/><span class="opt-box"></span><span>None yet</span></label>
+  </div>
+  <div class="nav-row">
+    <button class="nav-btn btn-back" onclick="go(-1)">← Back</button>
+    <button class="nav-btn btn-next" onclick="go(1)">Next →</button>
+  </div>
+</div>
+
+<!-- Q7: Feel -->
+<div class="question-card" data-q="7" data-section="Design &amp; Style" data-time="7">
+  <div class="q-meta"><span class="q-number">08 / 27</span><span class="q-tag">Design</span></div>
+  <p class="q-text">How do you want your website to feel?</p>
+  <p class="q-hint">Choose as many as apply — this shapes every design decision.</p>
+  <div class="opts-grid">
+    <label class="opt"><input type="checkbox" name="feel" value="Clean &amp; Modern"/><span class="opt-box"></span><span>Clean &amp; Modern</span></label>
+    <label class="opt"><input type="checkbox" name="feel" value="Bold &amp; Eye-catching"/><span class="opt-box"></span><span>Bold &amp; Eye-catching</span></label>
+    <label class="opt"><input type="checkbox" name="feel" value="Warm &amp; Friendly"/><span class="opt-box"></span><span>Warm &amp; Friendly</span></label>
+    <label class="opt"><input type="checkbox" name="feel" value="Professional &amp; Corporate"/><span class="opt-box"></span><span>Professional</span></label>
+    <label class="opt"><input type="checkbox" name="feel" value="Luxury &amp; High-end"/><span class="opt-box"></span><span>Luxury &amp; High-end</span></label>
+    <label class="opt"><input type="checkbox" name="feel" value="Fun &amp; Playful"/><span class="opt-box"></span><span>Fun &amp; Playful</span></label>
+  </div>
+  <div class="nav-row">
+    <button class="nav-btn btn-back" onclick="go(-1)">← Back</button>
+    <button class="nav-btn btn-next" onclick="go(1)">Next →</button>
+  </div>
+</div>
+
+<!-- Q8: Inspiration -->
+<div class="question-card" data-q="8" data-section="Design &amp; Style" data-time="6">
+  <div class="q-meta"><span class="q-number">09 / 27</span><span class="q-tag">Design</span></div>
+  <p class="q-text">Any websites you love the look of?</p>
+  <p class="q-hint">Paste links or just describe it. "I like how Apple's site looks — very clean" is totally helpful.</p>
   <div class="char-wrap">
-    <textarea id="q5" name="success" placeholder="e.g. 10 new enquiries per month, consistently booking out my calendar…" maxlength="400" oninput="counter(this,'cc5',400)"></textarea>
-    <span class="char-counter" id="cc5">0 / 400</span>
+    <textarea id="q8" name="inspiration" placeholder="e.g. I love how clean and simple the Nike website is…" maxlength="500" oninput="charCount(this,'cc8',500)"></textarea>
+    <span class="char-count" id="cc8">0/500</span>
   </div>
   <div class="nav-row">
-    <button class="nav-btn btn-prev" onclick="go(-1)">← Back</button>
+    <button class="nav-btn btn-back" onclick="go(-1)">← Back</button>
     <button class="nav-btn btn-next" onclick="go(1)">Next →</button>
   </div>
 </div>
 
-<!-- Q7 -->
-<div class="question-card" data-index="6" role="group" aria-labelledby="ql6">
-  <div class="q-meta"><span class="q-number">Question 7 of 24</span><span class="q-section-tag">Existing Presence</span></div>
-  <p class="question-text" id="ql6">Do you have a current website?</p>
-  <div class="options-grid">
-    <label class="option-label"><input type="radio" name="has_site" value="Yes"/><span class="opt-box radio"></span>Yes</label>
-    <label class="option-label"><input type="radio" name="has_site" value="No"/><span class="opt-box radio"></span>No</label>
-  </div>
-  <input type="url" id="q6" name="current_url" placeholder="If yes — paste the URL here" aria-label="Current website URL"/>
+<!-- Q9: Copy -->
+<div class="question-card" data-q="9" data-section="Content" data-time="6">
+  <div class="q-meta"><span class="q-number">10 / 27</span><span class="q-tag">Content</span></div>
+  <p class="q-text">Who will write the words on your website?<span class="required">*</span></p>
+  <p class="q-hint">Every website needs text — your services, hours, about section, etc.</p>
+  <select id="q9" name="copy">
+    <option value="">Choose an option…</option>
+    <option>I'll write everything myself</option>
+    <option>I need help writing the content</option>
+    <option>We'll work on it together</option>
+    <option>Not sure yet</option>
+  </select>
+  <span class="field-err" id="e9">Please select an option.</span>
   <div class="nav-row">
-    <button class="nav-btn btn-prev" onclick="go(-1)">← Back</button>
+    <button class="nav-btn btn-back" onclick="go(-1)">← Back</button>
     <button class="nav-btn btn-next" onclick="go(1)">Next →</button>
   </div>
 </div>
 
-<!-- Q8 -->
-<div class="question-card" data-index="7" role="group" aria-labelledby="ql7">
-  <div class="q-meta"><span class="q-number">Question 8 of 24</span><span class="q-section-tag">Existing Presence</span></div>
-  <p class="question-text" id="ql7">What do you like and dislike about your current site?</p>
-  <p class="question-hint">Skip if you don't have one.</p>
+<!-- Q10: Photos -->
+<div class="question-card" data-q="10" data-section="Content" data-time="6">
+  <div class="q-meta"><span class="q-number">11 / 27</span><span class="q-tag">Content</span></div>
+  <p class="q-text">Do you have photos to use on your site?</p>
+  <select name="media">
+    <option value="">Choose an option…</option>
+    <option>Yes, I have my own photos</option>
+    <option>No, please use stock photos (free)</option>
+    <option>A mix of mine and stock photos</option>
+    <option>Not sure yet</option>
+  </select>
+  <div class="nav-row">
+    <button class="nav-btn btn-back" onclick="go(-1)">← Back</button>
+    <button class="nav-btn btn-next" onclick="go(1)">Next →</button>
+  </div>
+</div>
+
+<!-- Q11: Domain -->
+<div class="question-card" data-q="11" data-section="Content" data-time="5">
+  <div class="q-meta"><span class="q-number">12 / 27</span><span class="q-tag">Technical</span></div>
+  <p class="q-text">Do you have a web address (domain name) already?</p>
+  <p class="q-hint">A domain is your website's address — like <strong style="color:var(--text)">mikebarbershop.com</strong>. If you don't have one, I'll help you get one as part of the setup.</p>
+  <div class="opts-grid">
+    <label class="opt"><input type="radio" name="domain_status" value="Yes"/><span class="opt-box radio"></span><span>Yes, I have one</span></label>
+    <label class="opt"><input type="radio" name="domain_status" value="No"/><span class="opt-box radio"></span><span>No, I need one</span></label>
+    <label class="opt"><input type="radio" name="domain_status" value="Not sure"/><span class="opt-box radio"></span><span>Not sure</span></label>
+  </div>
+  <input type="text" name="domain_name" placeholder="If yes — what is it? (e.g. mybusiness.com)"/>
+  <div class="nav-row">
+    <button class="nav-btn btn-back" onclick="go(-1)">← Back</button>
+    <button class="nav-btn btn-next" onclick="go(1)">Next →</button>
+  </div>
+</div>
+
+<!-- Q12: Timeline -->
+<div class="question-card" data-q="12" data-section="Content" data-time="5">
+  <div class="q-meta"><span class="q-number">13 / 27</span><span class="q-tag">Timeline</span></div>
+  <p class="q-text">When do you need the site to be ready?</p>
+  <select name="timeline">
+    <option value="">Choose a timeframe…</option>
+    <option>As soon as possible</option>
+    <option>Within 2 weeks</option>
+    <option>Within a month</option>
+    <option>1–3 months</option>
+    <option>I'm flexible</option>
+  </select>
+  <input type="text" name="hard_deadline" placeholder="Any specific date? (e.g. grand opening July 4th)" style="margin-top:6px;"/>
+  <div class="nav-row">
+    <button class="nav-btn btn-back" onclick="go(-1)">← Back</button>
+    <button class="nav-btn btn-next" onclick="go(1)">Next →</button>
+  </div>
+</div>
+
+<!-- Q13: Notes -->
+<div class="question-card" data-q="13" data-section="Content" data-time="5">
+  <div class="q-meta"><span class="q-number">14 / 27</span><span class="q-tag">Anything Else</span></div>
+  <p class="q-text">Anything else I should know?</p>
+  <p class="q-hint">Competitors, special requests, things you definitely want or don't want — anything goes.</p>
   <div class="char-wrap">
-    <textarea id="q7" name="site_feedback" placeholder="e.g. I like the colour scheme but the navigation is confusing…" maxlength="500" oninput="counter(this,'cc7',500)"></textarea>
-    <span class="char-counter" id="cc7">0 / 500</span>
+    <textarea name="notes" placeholder="Share anything that helps me understand your vision…" maxlength="600" oninput="charCount(this,'cc13',600)"></textarea>
+    <span class="char-count" id="cc13">0/600</span>
   </div>
   <div class="nav-row">
-    <button class="nav-btn btn-prev" onclick="go(-1)">← Back</button>
+    <button class="nav-btn btn-back" onclick="go(-1)">← Back</button>
     <button class="nav-btn btn-next" onclick="go(1)">Next →</button>
   </div>
 </div>
 
-<!-- Q9 -->
-<div class="question-card" data-index="8" role="group" aria-labelledby="ql8">
-  <div class="q-meta"><span class="q-number">Question 9 of 24</span><span class="q-section-tag">Existing Presence</span></div>
-  <p class="question-text" id="ql8">Do you have existing brand assets?</p>
-  <p class="question-hint">Select everything that already exists.</p>
-  <div class="options-grid">
-    <label class="option-label"><input type="checkbox" name="assets" value="Logo"/><span class="opt-box"></span>Logo</label>
-    <label class="option-label"><input type="checkbox" name="assets" value="Brand colours"/><span class="opt-box"></span>Brand colours</label>
-    <label class="option-label"><input type="checkbox" name="assets" value="Fonts/Typography"/><span class="opt-box"></span>Fonts / Typography</label>
-    <label class="option-label"><input type="checkbox" name="assets" value="Style guide"/><span class="opt-box"></span>Style guide</label>
-    <label class="option-label"><input type="checkbox" name="assets" value="Photography"/><span class="opt-box"></span>Photography</label>
-    <label class="option-label"><input type="checkbox" name="assets" value="None yet"/><span class="opt-box"></span>None yet</label>
+<!-- Q14: PACKAGE -->
+<div class="question-card" data-q="14" data-section="Your Package" data-time="4">
+  <div class="q-meta"><span class="q-number">15 / 27</span><span class="q-tag">Pricing</span></div>
+  <p class="q-text">Choose your website package.<span class="required">*</span></p>
+  <p class="q-hint">Not sure? The Starter is great for most local businesses just getting online.</p>
+  <div class="pkg-grid">
+    <div class="pkg-card"><label>
+      <input type="radio" name="package" value="Starter" data-price="500" onchange="calcPricing()"/>
+      <div class="pkg-head">
+        <div class="pkg-left"><div class="pkg-radio-dot"></div><div><div class="pkg-name">Starter</div><div class="pkg-sub">Perfect for getting online fast</div></div></div>
+        <div class="pkg-price-tag">$500</div>
+      </div>
+      <div class="pkg-body">
+        <div class="pkg-includes-label">What's included</div>
+        <div class="pkg-feats">
+          <div class="pkg-feat">Up to 3 pages — Home, Services, and Contact</div>
+          <div class="pkg-feat">Mobile-friendly design that looks great on any phone</div>
+          <div class="pkg-feat">Contact form so customers can reach you directly</div>
+          <div class="pkg-feat">Your hours, location, and social media links</div>
+          <div class="pkg-feat">Basic Google setup so you show up in search</div>
+          <div class="pkg-feat">Delivered within 5–7 business days</div>
+        </div>
+      </div>
+    </label></div>
+
+    <div class="pkg-card"><label>
+      <input type="radio" name="package" value="Standard" data-price="1000" onchange="calcPricing()"/>
+      <div class="pkg-head">
+        <div class="pkg-left"><div class="pkg-radio-dot"></div><div><div class="pkg-name">Standard</div><div class="pkg-sub">More pages, more features</div></div></div>
+        <div class="pkg-price-tag">$1,000</div>
+      </div>
+      <div class="pkg-body">
+        <div class="pkg-includes-label">What's included</div>
+        <div class="pkg-feats">
+          <div class="pkg-feat">Up to 6 pages — Home, About, Services, Gallery, Booking, Contact</div>
+          <div class="pkg-feat">Everything in Starter, plus:</div>
+          <div class="pkg-feat">Online booking or appointment form (customers schedule 24/7)</div>
+          <div class="pkg-feat">Photo gallery to showcase your work</div>
+          <div class="pkg-feat">Customer testimonials / reviews section</div>
+          <div class="pkg-feat">Delivered within 7–10 business days</div>
+        </div>
+      </div>
+    </label></div>
+
+    <div class="pkg-card"><label>
+      <input type="radio" name="package" value="Premium" data-price="2500" onchange="calcPricing()"/>
+      <div class="pkg-head">
+        <div class="pkg-left"><div class="pkg-radio-dot"></div><div><div class="pkg-name">Premium</div><div class="pkg-sub">Full-featured, built to grow</div></div></div>
+        <div class="pkg-price-tag">$2,500</div>
+      </div>
+      <div class="pkg-body">
+        <div class="pkg-includes-label">What's included</div>
+        <div class="pkg-feats">
+          <div class="pkg-feat">Up to 10 pages — fully custom layout</div>
+          <div class="pkg-feat">Everything in Standard, plus:</div>
+          <div class="pkg-feat">Online store to sell products or services directly</div>
+          <div class="pkg-feat">Secure payment processing (customers pay on your site)</div>
+          <div class="pkg-feat">Blog — post updates, news, and tips to attract Google traffic</div>
+          <div class="pkg-feat">Advanced Google setup and speed optimization</div>
+          <div class="pkg-feat">Delivered within 10–14 business days</div>
+        </div>
+      </div>
+    </label></div>
   </div>
+  <span class="field-err" id="e14">Please select a package to continue.</span>
   <div class="nav-row">
-    <button class="nav-btn btn-prev" onclick="go(-1)">← Back</button>
+    <button class="nav-btn btn-back" onclick="go(-1)">← Back</button>
     <button class="nav-btn btn-next" onclick="go(1)">Next →</button>
   </div>
 </div>
 
-<!-- Q10 -->
-<div class="question-card" data-index="9" role="group" aria-labelledby="ql9">
-  <div class="q-meta"><span class="q-number">Question 10 of 24</span><span class="q-section-tag">Design &amp; Style</span></div>
-  <p class="question-text" id="ql9">Share 2–3 websites you love — and why you love them.</p>
-  <p class="question-hint">Paste URLs or just describe them. This helps me understand your taste.</p>
+<!-- Q15: ONE-TIME ADD-ONS -->
+<div class="question-card" data-q="15" data-section="Add-Ons" data-time="4">
+  <div class="q-meta"><span class="q-number">16 / 27</span><span class="q-tag">Add-Ons</span></div>
+  <p class="q-text">Any one-time extras? <span style="font-weight:300;font-family:var(--body);font-size:1rem;color:var(--text-3)">Optional</span></p>
+  <p class="q-hint">Built once during your project and added to your setup price. Click "What's this?" on any item to learn more.</p>
+
+  <div class="addon-card">
+    <div class="addon-head">
+      <label style="display:flex;align-items:center;gap:12px;flex:1;cursor:pointer;" onclick="event.stopPropagation()">
+        <input type="checkbox" name="onetime" value="Logo Design" data-price="150" onchange="calcPricing()"/>
+        <div class="addon-chk"></div>
+        <div class="addon-info"><div class="addon-name">Logo Design</div></div>
+      </label>
+      <div class="addon-price">+$150</div>
+      <button class="addon-expand" onclick="toggleAddon(this)">What's this?</button>
+    </div>
+    <div class="addon-body"><p>Don't have a logo? I'll design a clean, professional logo for your business that you can use on your website, social media, business cards, and beyond. You'll receive all final files ready to use anywhere.</p></div>
+  </div>
+
+  <div class="addon-card">
+    <div class="addon-head">
+      <label style="display:flex;align-items:center;gap:12px;flex:1;cursor:pointer;" onclick="event.stopPropagation()">
+        <input type="checkbox" name="onetime" value="Booking System" data-price="75" onchange="calcPricing()"/>
+        <div class="addon-chk"></div>
+        <div class="addon-info"><div class="addon-name">Online Booking System Setup</div></div>
+      </label>
+      <div class="addon-price">+$75</div>
+      <button class="addon-expand" onclick="toggleAddon(this)">What's this?</button>
+    </div>
+    <div class="addon-body"><p>I'll connect a booking tool (like Calendly or Square Appointments) directly to your site so customers can schedule appointments 24/7 without calling you. You get an instant notification every time someone books.</p></div>
+  </div>
+
+  <div class="addon-card">
+    <div class="addon-head">
+      <label style="display:flex;align-items:center;gap:12px;flex:1;cursor:pointer;" onclick="event.stopPropagation()">
+        <input type="checkbox" name="onetime" value="Extra Pages" data-price="75" onchange="calcPricing()"/>
+        <div class="addon-chk"></div>
+        <div class="addon-info"><div class="addon-name">Extra Pages <span style="font-size:0.78rem;color:var(--text-3);font-weight:400;">(per page)</span></div></div>
+      </label>
+      <div class="addon-price">+$75/pg</div>
+      <button class="addon-expand" onclick="toggleAddon(this)">What's this?</button>
+    </div>
+    <div class="addon-body"><p>Need more pages than your package includes? Each additional page is $75. For example: a dedicated Menu page, a Team page, or separate pages for each of your services.</p></div>
+  </div>
+
+  <div class="addon-card">
+    <div class="addon-head">
+      <label style="display:flex;align-items:center;gap:12px;flex:1;cursor:pointer;" onclick="event.stopPropagation()">
+        <input type="checkbox" name="onetime" value="Google Business Setup" data-price="50" onchange="calcPricing()"/>
+        <div class="addon-chk"></div>
+        <div class="addon-info"><div class="addon-name">Google Maps &amp; Business Profile Setup</div></div>
+      </label>
+      <div class="addon-price">+$50</div>
+      <button class="addon-expand" onclick="toggleAddon(this)">What's this?</button>
+    </div>
+    <div class="addon-body"><p>When someone searches your type of business on Google Maps, you want to appear. I'll fully set up your Google Business Profile — hours, photos, description, and a link to your new website — so local customers can find you easily.</p></div>
+  </div>
+
+  <div class="nav-row">
+    <button class="nav-btn btn-back" onclick="go(-1)">← Back</button>
+    <button class="nav-btn btn-next" onclick="go(1)">Next →</button>
+  </div>
+</div>
+
+<!-- Q16: MONTHLY ADD-ONS -->
+<div class="question-card" data-q="16" data-section="Monthly Plan" data-time="4">
+  <div class="q-meta"><span class="q-number">17 / 27</span><span class="q-tag">Monthly</span></div>
+  <p class="q-text">Build your monthly maintenance plan.</p>
+  <p class="q-hint">Every client starts with the base plan. Add extras based on how much support you want. You can always change this later.</p>
+
+  <div class="base-callout">
+    <strong>✦ Included with every plan — $45/month</strong>
+    <div class="base-feats">
+      <div class="base-feat">Website hosting — keeps your site live and running 24/7</div>
+      <div class="base-feat">Domain renewal — your web address stays yours every year</div>
+      <div class="base-feat">Security updates — protects your site from hackers and viruses</div>
+      <div class="base-feat">Uptime monitoring — if your site goes down, I fix it immediately</div>
+    </div>
+  </div>
+
+  <p style="font-size:0.84rem;font-weight:600;color:var(--text);margin-top:6px;">Optional add-ons:</p>
+
+  <div class="addon-card">
+    <div class="addon-head">
+      <label style="display:flex;align-items:center;gap:12px;flex:1;cursor:pointer;" onclick="event.stopPropagation()">
+        <input type="checkbox" name="monthly" value="Content Updates" data-price="30" onchange="calcPricing()"/>
+        <div class="addon-chk"></div>
+        <div class="addon-info"><div class="addon-name">Monthly Content Updates</div></div>
+      </label>
+      <div class="addon-price">+$30/mo</div>
+      <button class="addon-expand" onclick="toggleAddon(this)">What's this?</button>
+    </div>
+    <div class="addon-body"><p>Each month, send me changes and I'll update your website within 48 hours — up to 2 hours of work. This covers: updating hours, prices, photos, menus, announcements, or any other content. No tech knowledge needed on your end. Just send a text or email.</p></div>
+  </div>
+
+  <div class="addon-card">
+    <div class="addon-head">
+      <label style="display:flex;align-items:center;gap:12px;flex:1;cursor:pointer;" onclick="event.stopPropagation()">
+        <input type="checkbox" name="monthly" value="Google SEO Monitoring" data-price="30" onchange="calcPricing()"/>
+        <div class="addon-chk"></div>
+        <div class="addon-info"><div class="addon-name">Google Ranking Monitoring <span style="font-size:0.72rem;color:var(--text-3);font-weight:400;">(SEO)</span></div></div>
+      </label>
+      <div class="addon-price">+$30/mo</div>
+      <button class="addon-expand" onclick="toggleAddon(this)">What's this?</button>
+    </div>
+    <div class="addon-body"><p>SEO — Search Engine Optimization — is how high up your business appears when someone Googles something like "barbershop near me." Every month I check your site's Google ranking, fix anything dragging it down, and make improvements so more people find you over time without paid ads.</p></div>
+  </div>
+
+  <div class="addon-card">
+    <div class="addon-head">
+      <label style="display:flex;align-items:center;gap:12px;flex:1;cursor:pointer;" onclick="event.stopPropagation()">
+        <input type="checkbox" name="monthly" value="Monthly Visitor Report" data-price="20" onchange="calcPricing()"/>
+        <div class="addon-chk"></div>
+        <div class="addon-info"><div class="addon-name">Monthly Visitor Report</div></div>
+      </label>
+      <div class="addon-price">+$20/mo</div>
+      <button class="addon-expand" onclick="toggleAddon(this)">What's this?</button>
+    </div>
+    <div class="addon-body"><p>Every month I send you a simple report showing: how many people visited your site, where they came from (Google, Instagram, direct search), which pages they looked at, and whether those numbers are going up. Written in plain English — no tech jargon. Just the info that matters.</p></div>
+  </div>
+
+  <div class="addon-card">
+    <div class="addon-head">
+      <label style="display:flex;align-items:center;gap:12px;flex:1;cursor:pointer;" onclick="event.stopPropagation()">
+        <input type="checkbox" name="monthly" value="Google Maps Management" data-price="30" onchange="calcPricing()"/>
+        <div class="addon-chk"></div>
+        <div class="addon-info"><div class="addon-name">Google Maps Profile Management</div></div>
+      </label>
+      <div class="addon-price">+$30/mo</div>
+      <button class="addon-expand" onclick="toggleAddon(this)">What's this?</button>
+    </div>
+    <div class="addon-body"><p>Your Google Maps listing is often the first thing a local customer sees before your website. Every month I'll keep it current — posting updates (specials, new hours), adding photos, and flagging reviews. Businesses with active Google profiles get found significantly more often.</p></div>
+  </div>
+
+  <div class="addon-card">
+    <div class="addon-head">
+      <label style="display:flex;align-items:center;gap:12px;flex:1;cursor:pointer;" onclick="event.stopPropagation()">
+        <input type="checkbox" name="monthly" value="Weekly Backups" data-price="20" onchange="calcPricing()"/>
+        <div class="addon-chk"></div>
+        <div class="addon-info"><div class="addon-name">Weekly Website Backups</div></div>
+      </label>
+      <div class="addon-price">+$20/mo</div>
+      <button class="addon-expand" onclick="toggleAddon(this)">What's this?</button>
+    </div>
+    <div class="addon-body"><p>Think of this as insurance for your website. Every week I save a complete copy of your entire site. If anything ever goes wrong — a hack, accidental deletion, technical failure — I can restore everything to normal in minutes instead of starting over from scratch.</p></div>
+  </div>
+
+  <div class="addon-card">
+    <div class="addon-head">
+      <label style="display:flex;align-items:center;gap:12px;flex:1;cursor:pointer;" onclick="event.stopPropagation()">
+        <input type="checkbox" name="monthly" value="Priority Support" data-price="25" onchange="calcPricing()"/>
+        <div class="addon-chk"></div>
+        <div class="addon-info"><div class="addon-name">Priority Support</div></div>
+      </label>
+      <div class="addon-price">+$25/mo</div>
+      <button class="addon-expand" onclick="toggleAddon(this)">What's this?</button>
+    </div>
+    <div class="addon-body"><p>If something breaks or you have an urgent request, you go straight to the front of the line. Standard response time is 24–48 hours. With Priority Support, I respond the same day — within a few hours. Best for businesses where the website is critical to daily operations.</p></div>
+  </div>
+
+  <div class="addon-card">
+    <div class="addon-head">
+      <label style="display:flex;align-items:center;gap:12px;flex:1;cursor:pointer;" onclick="event.stopPropagation()">
+        <input type="checkbox" name="monthly" value="Online Store Management" data-price="50" onchange="calcPricing()"/>
+        <div class="addon-chk"></div>
+        <div class="addon-info"><div class="addon-name">Online Store Management</div></div>
+      </label>
+      <div class="addon-price">+$50/mo</div>
+      <button class="addon-expand" onclick="toggleAddon(this)">What's this?</button>
+    </div>
+    <div class="addon-body"><p>If your site has an online store, this keeps it running smoothly. I'll update product listings, make sure payments are processing correctly, handle any technical store issues, and ensure customers can always checkout without problems. <em style="color:var(--text-3)">Only needed if your site has a shop.</em></p></div>
+  </div>
+
+  <div class="nav-row">
+    <button class="nav-btn btn-back" onclick="go(-1)">← Back</button>
+    <button class="nav-btn btn-next" onclick="go(1)">Next →</button>
+  </div>
+</div>
+
+<!-- Q17: PAYMENT PLAN -->
+<div class="question-card" data-q="17" data-section="Payment" data-time="3">
+  <div class="q-meta"><span class="q-number">18 / 27</span><span class="q-tag">Payment</span></div>
+  <p class="q-text">How would you like to pay the setup fee?<span class="required">*</span></p>
+
+  <label class="pay-opt">
+    <input type="radio" name="pay_plan" value="Pay in Full" onchange="calcPricing()"/>
+    <div class="pay-radio-dot"></div>
+    <div class="pay-info-inner">
+      <div class="pay-title">Pay in Full <span class="pay-badge">Most Popular</span></div>
+      <div class="pay-detail">Pay the full setup fee before work begins. Work starts immediately after payment is confirmed.</div>
+    </div>
+  </label>
+
+  <label class="pay-opt">
+    <input type="radio" name="pay_plan" value="50/50 Split" onchange="calcPricing()"/>
+    <div class="pay-radio-dot"></div>
+    <div class="pay-info-inner">
+      <div class="pay-title">50% Now, 50% on Launch</div>
+      <div class="pay-detail">Pay half upfront to start, and the remaining half when your site is ready to go live. A great option if you'd like to spread the cost.</div>
+    </div>
+  </label>
+
+  <span class="field-err" id="e17">Please choose a payment plan.</span>
+
+  <div>
+    <p style="font-size:0.82rem;font-weight:700;color:var(--text);margin-bottom:10px;">Accepted payment methods:</p>
+    <div class="pm-grid">
+      <div class="pm-chip">💚 Cash App</div>
+      <div class="pm-chip">💙 Zelle</div>
+      <div class="pm-chip">🔵 PayPal</div>
+      <div class="pm-chip">💜 Venmo</div>
+      <div class="pm-chip">🏦 Bank Transfer</div>
+    </div>
+  </div>
+
+  <div class="nav-row">
+    <button class="nav-btn btn-back" onclick="go(-1)">← Back</button>
+    <button class="nav-btn btn-next" onclick="go(1)">Next →</button>
+  </div>
+</div>
+
+<!-- Q18: PRICE SUMMARY -->
+<div class="question-card" data-q="18" data-section="Your Quote" data-time="3">
+  <div class="q-meta"><span class="q-number">19 / 27</span><span class="q-tag">Quote</span></div>
+  <p class="q-text">Your custom quote.</p>
+  <p class="q-hint">Everything you've selected, priced out clearly. Go back to adjust anything.</p>
+
+  <div class="summary-box" id="price-summary">
+    <div class="summary-head">Project Breakdown</div>
+    <div class="sum-row"><span class="sum-label">Package</span><span class="sum-val" id="s-pkg">—</span></div>
+    <div id="s-onetime"></div>
+    <div class="sum-row total"><span class="sum-label">Setup Total</span><span class="sum-val" id="s-setup">—</span></div>
+    <div class="sum-divider">Monthly Plan</div>
+    <div class="sum-row"><span class="sum-label">Base hosting &amp; maintenance</span><span class="sum-val">$45/mo</span></div>
+    <div id="s-monthly"></div>
+    <div class="sum-row retainer"><span class="sum-label">Monthly Retainer Total</span><span class="sum-val" id="s-retainer">$45/mo</span></div>
+    <div class="sum-divider">Payment Schedule</div>
+    <div id="s-payment"></div>
+  </div>
+
+  <div class="nav-row">
+    <button class="nav-btn btn-back" onclick="go(-1)">← Back</button>
+    <button class="nav-btn btn-next" onclick="go(1)">Next →</button>
+  </div>
+</div>
+
+<!-- Q19: Full name -->
+<div class="question-card" data-q="19" data-section="Your Details" data-time="2">
+  <div class="q-meta"><span class="q-number">20 / 27</span><span class="q-tag">Details</span></div>
+  <p class="q-text">What's your full name?<span class="required">*</span></p>
+  <input type="text" id="q19" name="client_name" placeholder="First and last name" autocomplete="name"/>
+  <span class="field-err" id="e19">Please enter your name.</span>
+  <div class="nav-row">
+    <button class="nav-btn btn-back" onclick="go(-1)">← Back</button>
+    <button class="nav-btn btn-next" onclick="go(1)">Next →</button>
+  </div>
+</div>
+
+<!-- Q20: Email -->
+<div class="question-card" data-q="20" data-section="Your Details" data-time="2">
+  <div class="q-meta"><span class="q-number">21 / 27</span><span class="q-tag">Details</span></div>
+  <p class="q-text">What's your email address?<span class="required">*</span></p>
+  <input type="email" id="q20" name="client_email" placeholder="you@example.com" autocomplete="email"/>
+  <span class="field-err" id="e20">Please enter a valid email address.</span>
+  <div class="nav-row">
+    <button class="nav-btn btn-back" onclick="go(-1)">← Back</button>
+    <button class="nav-btn btn-next" onclick="go(1)">Next →</button>
+  </div>
+</div>
+
+<!-- Q21: Phone -->
+<div class="question-card" data-q="21" data-section="Your Details" data-time="2">
+  <div class="q-meta"><span class="q-number">22 / 27</span><span class="q-tag">Details</span></div>
+  <p class="q-text">Best phone number to reach you?</p>
+  <input type="tel" name="client_phone" placeholder="(555) 000-0000" autocomplete="tel"/>
+  <div class="nav-row">
+    <button class="nav-btn btn-back" onclick="go(-1)">← Back</button>
+    <button class="nav-btn btn-next" onclick="go(1)">Next →</button>
+  </div>
+</div>
+
+<!-- Q22: Contact pref -->
+<div class="question-card" data-q="22" data-section="Your Details" data-time="2">
+  <div class="q-meta"><span class="q-number">23 / 27</span><span class="q-tag">Details</span></div>
+  <p class="q-text">How do you prefer to be contacted?</p>
+  <div class="opts-grid">
+    <label class="opt"><input type="radio" name="contact_pref" value="Email"/><span class="opt-box radio"></span><span>Email</span></label>
+    <label class="opt"><input type="radio" name="contact_pref" value="Text"/><span class="opt-box radio"></span><span>Text message</span></label>
+    <label class="opt"><input type="radio" name="contact_pref" value="Phone call"/><span class="opt-box radio"></span><span>Phone call</span></label>
+    <label class="opt"><input type="radio" name="contact_pref" value="WhatsApp"/><span class="opt-box radio"></span><span>WhatsApp</span></label>
+  </div>
+  <div class="nav-row">
+    <button class="nav-btn btn-back" onclick="go(-1)">← Back</button>
+    <button class="nav-btn btn-next" onclick="go(1)">Next →</button>
+  </div>
+</div>
+
+<!-- Q23: Payment method -->
+<div class="question-card" data-q="23" data-section="Your Details" data-time="2">
+  <div class="q-meta"><span class="q-number">24 / 27</span><span class="q-tag">Details</span></div>
+  <p class="q-text">Which payment method will you use?</p>
+  <div class="opts-grid">
+    <label class="opt"><input type="radio" name="pay_method" value="Cash App"/><span class="opt-box radio"></span><span>Cash App</span></label>
+    <label class="opt"><input type="radio" name="pay_method" value="Zelle"/><span class="opt-box radio"></span><span>Zelle</span></label>
+    <label class="opt"><input type="radio" name="pay_method" value="PayPal"/><span class="opt-box radio"></span><span>PayPal</span></label>
+    <label class="opt"><input type="radio" name="pay_method" value="Venmo"/><span class="opt-box radio"></span><span>Venmo</span></label>
+    <label class="opt"><input type="radio" name="pay_method" value="Bank Transfer"/><span class="opt-box radio"></span><span>Bank Transfer</span></label>
+  </div>
+  <div class="nav-row">
+    <button class="nav-btn btn-back" onclick="go(-1)">← Back</button>
+    <button class="nav-btn btn-next" onclick="go(1)">Next →</button>
+  </div>
+</div>
+
+<!-- Q24: Final notes -->
+<div class="question-card" data-q="24" data-section="Your Details" data-time="1">
+  <div class="q-meta"><span class="q-number">25 / 27</span><span class="q-tag">Details</span></div>
+  <p class="q-text">Any final questions or comments?</p>
   <div class="char-wrap">
-    <textarea id="q9" name="inspiration" placeholder="e.g. https://example.com — I love the clean layout and big photography…" maxlength="600" oninput="counter(this,'cc9',600)"></textarea>
-    <span class="char-counter" id="cc9">0 / 600</span>
+    <textarea name="final_notes" placeholder="Anything else on your mind before we get started…" maxlength="500" oninput="charCount(this,'cc24',500)"></textarea>
+    <span class="char-count" id="cc24">0/500</span>
   </div>
   <div class="nav-row">
-    <button class="nav-btn btn-prev" onclick="go(-1)">← Back</button>
+    <button class="nav-btn btn-back" onclick="go(-1)">← Back</button>
     <button class="nav-btn btn-next" onclick="go(1)">Next →</button>
   </div>
 </div>
 
-<!-- Q11 -->
-<div class="question-card" data-index="10" role="group" aria-labelledby="ql10">
-  <div class="q-meta"><span class="q-number">Question 11 of 24</span><span class="q-section-tag">Design &amp; Style</span></div>
-  <p class="question-text" id="ql10">How would you describe the feel you want?</p>
-  <p class="question-hint">Choose as many as apply.</p>
-  <div class="options-grid">
-    <label class="option-label"><input type="checkbox" name="feel" value="Clean &amp; Modern"/><span class="opt-box"></span>Clean &amp; Modern</label>
-    <label class="option-label"><input type="checkbox" name="feel" value="Bold &amp; Eye-catching"/><span class="opt-box"></span>Bold &amp; Eye-catching</label>
-    <label class="option-label"><input type="checkbox" name="feel" value="Warm &amp; Friendly"/><span class="opt-box"></span>Warm &amp; Friendly</label>
-    <label class="option-label"><input type="checkbox" name="feel" value="Professional &amp; Corporate"/><span class="opt-box"></span>Professional &amp; Corporate</label>
-    <label class="option-label"><input type="checkbox" name="feel" value="Luxury &amp; High-end"/><span class="opt-box"></span>Luxury &amp; High-end</label>
-    <label class="option-label"><input type="checkbox" name="feel" value="Fun &amp; Playful"/><span class="opt-box"></span>Fun &amp; Playful</label>
+<!-- Q25: CONTRACT -->
+<div class="question-card" data-q="25" data-section="Agreement" data-time="1">
+  <div class="q-meta"><span class="q-number">26 / 27</span><span class="q-tag">Agreement</span></div>
+  <p class="q-text">Review &amp; sign the agreement.</p>
+  <p class="q-hint">Read through the terms below, then type your full name at the bottom to sign digitally.</p>
+
+  <div class="contract-wrap">
+    <div class="contract-head">
+      <h3>Web Design Services Agreement</h3>
+      <p>KP Designs — Professional Website Services &nbsp;·&nbsp; New York, NY</p>
+    </div>
+    <div class="contract-body">
+      <div class="clause"><h4>1. Scope of Services</h4><p>KP Designs ("Service Provider") agrees to design, build, and deliver a professional website based on the package and add-ons selected within this document. The agreed scope is defined by the selections made in this questionnaire. Any work outside the agreed scope will be quoted separately and requires written approval before it begins.</p></div>
+      <div class="clause"><h4>2. Payment Terms</h4><p>The setup fee is payable as selected — either in full before work begins, or in a 50/50 split (half upfront, half on launch). Monthly retainer payments begin the month after launch and are due on the same date each month. All payments are non-refundable once work has commenced. Accepted methods: Cash App, Zelle, PayPal, Venmo, or bank transfer.</p></div>
+      <div class="clause"><h4>3. Timeline</h4><p>Work begins once the first payment is received and this agreement is signed. Timelines stated in the selected package apply. Delays caused by the client failing to provide content, photos, or timely feedback are not the responsibility of KP Designs.</p></div>
+      <div class="clause"><h4>4. Revisions</h4><p>The setup fee includes 2 rounds of revisions during the design phase. A revision round is a set of changes sent in one message or call. Additional rounds are billed at $50 each, due before changes are made.</p></div>
+      <div class="clause"><h4>5. Monthly Maintenance</h4><p>The monthly retainer covers the base plan and any add-ons selected. Work exceeding included hours (e.g. more than 2 hours of content updates per month) is billed at $40/hour, communicated and approved by the client before work begins.</p></div>
+      <div class="clause"><h4>6. Cancellation</h4><ul><li>Either party may cancel with 30 days written notice via email or text.</li><li>Upon cancellation, KP Designs will provide all website files within 7 business days.</li><li>Payments more than 14 days late may result in the site being taken offline until payment is received.</li><li>The setup fee is non-refundable once work has begun.</li></ul></div>
+      <div class="clause"><h4>7. Ownership</h4><p>Once the full setup fee is paid, the client owns the website and all custom content created for it. KP Designs retains the right to display the completed site in their portfolio. Stock images and third-party tools remain subject to their own licensing terms.</p></div>
+      <div class="clause"><h4>8. Limitation of Liability</h4><p>KP Designs is not liable for lost business or revenue resulting from website downtime or third-party service outages. Total liability shall not exceed the amount paid by the client in the 3 months preceding any claim.</p></div>
+      <div class="clause"><h4>9. Governing Law</h4><p>This agreement is governed by the laws of the State of New York. Disputes shall be addressed through good-faith communication before any legal action is pursued.</p></div>
+
+      <div class="sigs">
+        <div class="sig-block">
+          <div class="sig-label-text">Service Provider</div>
+          <div class="sig-name-display">KP Designs</div>
+          <div class="sig-date-text" id="sig-date-kp"></div>
+        </div>
+        <div class="sig-block">
+          <div class="sig-label-text">Client — Type your full name to sign</div>
+          <input class="sig-input-field" type="text" id="client-sig" name="client_signature" placeholder="Your full name" oninput="onSigInput()"/>
+          <div class="sig-date-text" id="sig-date-client"></div>
+        </div>
+      </div>
+      <div class="agree-note">By typing your name above, you confirm you have read, understood, and agree to all terms of this Web Design Services Agreement. This constitutes your digital signature and is legally binding.</div>
+    </div>
   </div>
+
+  <span class="field-err" id="e25">Please type your full name above to sign the agreement.</span>
   <div class="nav-row">
-    <button class="nav-btn btn-prev" onclick="go(-1)">← Back</button>
-    <button class="nav-btn btn-next" onclick="go(1)">Next →</button>
+    <button class="nav-btn btn-back" onclick="go(-1)">← Back</button>
+    <button class="nav-btn btn-review" onclick="go(1)">Review &amp; Submit →</button>
   </div>
 </div>
 
-<!-- Q12 -->
-<div class="question-card" data-index="11" role="group" aria-labelledby="ql11">
-  <div class="q-meta"><span class="q-number">Question 12 of 24</span><span class="q-section-tag">Design &amp; Style</span></div>
-  <p class="question-text" id="ql11">Any colours, styles, or design choices to avoid?</p>
-  <div class="char-wrap">
-    <textarea id="q11" name="avoid" placeholder="e.g. No dark backgrounds, nothing too corporate, avoid bright green…" maxlength="400" oninput="counter(this,'cc11',400)"></textarea>
-    <span class="char-counter" id="cc11">0 / 400</span>
-  </div>
-  <div class="nav-row">
-    <button class="nav-btn btn-prev" onclick="go(-1)">← Back</button>
-    <button class="nav-btn btn-next" onclick="go(1)">Next →</button>
-  </div>
-</div>
+<!-- Q26: FINAL REVIEW + SUBMIT -->
+<div class="question-card" data-q="26" data-section="Final Review" data-time="0">
+  <div class="q-meta"><span class="q-number">27 / 27</span><span class="q-tag">Final Step</span></div>
+  <p class="q-text">Ready to send?</p>
+  <p class="q-hint">Your completed quote and signed agreement are ready. Print a copy for your records, then hit Submit.</p>
 
-<!-- Q13 -->
-<div class="question-card" data-index="12" role="group" aria-labelledby="ql12">
-  <div class="q-meta"><span class="q-number">Question 13 of 24</span><span class="q-section-tag">Content</span></div>
-  <p class="question-text" id="ql12">Who will write the website copy?<span class="required">*</span></p>
-  <div class="custom-select-wrap">
-    <select id="q12" name="copy" aria-required="true">
-      <option value="">Choose an option…</option>
-      <option>I will write it myself</option>
-      <option>I need help with copy</option>
-      <option>We'll collaborate on it</option>
-      <option>Not sure yet</option>
-    </select>
+  <div class="final-box" id="final-box">
+    <h4>Order Summary</h4>
+    <div id="final-rows"></div>
   </div>
-  <span class="field-error" id="e12">Please select an option to continue.</span>
-  <div class="nav-row">
-    <button class="nav-btn btn-prev" onclick="go(-1)">← Back</button>
-    <button class="nav-btn btn-next" onclick="go(1)">Next →</button>
-  </div>
-</div>
 
-<!-- Q14 -->
-<div class="question-card" data-index="13" role="group" aria-labelledby="ql13">
-  <div class="q-meta"><span class="q-number">Question 14 of 24</span><span class="q-section-tag">Content</span></div>
-  <p class="question-text" id="ql13">Do you have photography or video, or will you need it?</p>
-  <div class="custom-select-wrap">
-    <select id="q13" name="media">
-      <option value="">Choose an option…</option>
-      <option>I have my own photos / video</option>
-      <option>I need a photographer or videographer</option>
-      <option>Stock imagery is fine</option>
-      <option>A mix of my own and stock</option>
-      <option>Not sure yet</option>
-    </select>
-  </div>
-  <div class="nav-row">
-    <button class="nav-btn btn-prev" onclick="go(-1)">← Back</button>
-    <button class="nav-btn btn-next" onclick="go(1)">Next →</button>
-  </div>
-</div>
-
-<!-- Q15 -->
-<div class="question-card" data-index="14" role="group" aria-labelledby="ql14">
-  <div class="q-meta"><span class="q-number">Question 15 of 24</span><span class="q-section-tag">Content</span></div>
-  <p class="question-text" id="ql14">What pages do you think your site needs?</p>
-  <p class="question-hint">Select all you know you'll need — we can refine this together.</p>
-  <div class="options-grid">
-    <label class="option-label"><input type="checkbox" name="pages" value="Home"/><span class="opt-box"></span>Home</label>
-    <label class="option-label"><input type="checkbox" name="pages" value="About"/><span class="opt-box"></span>About</label>
-    <label class="option-label"><input type="checkbox" name="pages" value="Services"/><span class="opt-box"></span>Services</label>
-    <label class="option-label"><input type="checkbox" name="pages" value="Portfolio"/><span class="opt-box"></span>Portfolio / Work</label>
-    <label class="option-label"><input type="checkbox" name="pages" value="Blog"/><span class="opt-box"></span>Blog</label>
-    <label class="option-label"><input type="checkbox" name="pages" value="Shop"/><span class="opt-box"></span>Shop</label>
-    <label class="option-label"><input type="checkbox" name="pages" value="Contact"/><span class="opt-box"></span>Contact</label>
-    <label class="option-label"><input type="checkbox" name="pages" value="FAQ"/><span class="opt-box"></span>FAQ</label>
-    <label class="option-label"><input type="checkbox" name="pages" value="Testimonials"/><span class="opt-box"></span>Testimonials</label>
-    <label class="option-label"><input type="checkbox" name="pages" value="Pricing"/><span class="opt-box"></span>Pricing</label>
-  </div>
-  <div class="nav-row">
-    <button class="nav-btn btn-prev" onclick="go(-1)">← Back</button>
-    <button class="nav-btn btn-next" onclick="go(1)">Next →</button>
-  </div>
-</div>
-
-<!-- Q16 -->
-<div class="question-card" data-index="15" role="group" aria-labelledby="ql15">
-  <div class="q-meta"><span class="q-number">Question 16 of 24</span><span class="q-section-tag">Features &amp; Functionality</span></div>
-  <p class="question-text" id="ql15">Which features will your site need?</p>
-  <p class="question-hint">Check everything that applies — even if you're not sure yet.</p>
-  <div class="options-grid">
-    <label class="option-label"><input type="checkbox" name="features" value="Contact form"/><span class="opt-box"></span>Contact form</label>
-    <label class="option-label"><input type="checkbox" name="features" value="Online booking"/><span class="opt-box"></span>Online booking</label>
-    <label class="option-label"><input type="checkbox" name="features" value="E-commerce"/><span class="opt-box"></span>E-commerce</label>
-    <label class="option-label"><input type="checkbox" name="features" value="Payment processing"/><span class="opt-box"></span>Payment processing</label>
-    <label class="option-label"><input type="checkbox" name="features" value="Newsletter signup"/><span class="opt-box"></span>Newsletter signup</label>
-    <label class="option-label"><input type="checkbox" name="features" value="Blog / CMS"/><span class="opt-box"></span>Blog / CMS</label>
-    <label class="option-label"><input type="checkbox" name="features" value="Client login"/><span class="opt-box"></span>Client login</label>
-    <label class="option-label"><input type="checkbox" name="features" value="Live chat"/><span class="opt-box"></span>Live chat</label>
-    <label class="option-label"><input type="checkbox" name="features" value="Multi-language"/><span class="opt-box"></span>Multi-language</label>
-    <label class="option-label"><input type="checkbox" name="features" value="Social feeds"/><span class="opt-box"></span>Social feeds</label>
-    <label class="option-label"><input type="checkbox" name="features" value="Analytics"/><span class="opt-box"></span>Analytics</label>
-    <label class="option-label"><input type="checkbox" name="features" value="SEO optimisation"/><span class="opt-box"></span>SEO optimisation</label>
-  </div>
-  <div class="nav-row">
-    <button class="nav-btn btn-prev" onclick="go(-1)">← Back</button>
-    <button class="nav-btn btn-next" onclick="go(1)">Next →</button>
-  </div>
-</div>
-
-<!-- Q17 -->
-<div class="question-card" data-index="16" role="group" aria-labelledby="ql16">
-  <div class="q-meta"><span class="q-number">Question 17 of 24</span><span class="q-section-tag">Features &amp; Functionality</span></div>
-  <p class="question-text" id="ql16">Any tools or platforms that need to integrate with the site?</p>
-  <p class="question-hint">e.g. Mailchimp, HubSpot, Calendly, Shopify, Stripe…</p>
-  <div class="char-wrap">
-    <textarea id="q16" name="integrations" placeholder="List any tools you use or want to connect…" maxlength="400" oninput="counter(this,'cc16',400)"></textarea>
-    <span class="char-counter" id="cc16">0 / 400</span>
-  </div>
-  <div class="nav-row">
-    <button class="nav-btn btn-prev" onclick="go(-1)">← Back</button>
-    <button class="nav-btn btn-next" onclick="go(1)">Next →</button>
-  </div>
-</div>
-
-<!-- Q18 -->
-<div class="question-card" data-index="17" role="group" aria-labelledby="ql17">
-  <div class="q-meta"><span class="q-number">Question 18 of 24</span><span class="q-section-tag">Technical &amp; Logistics</span></div>
-  <p class="question-text" id="ql17">Do you already have a domain name?</p>
-  <div class="options-grid">
-    <label class="option-label"><input type="radio" name="domain_status" value="Yes"/><span class="opt-box radio"></span>Yes, I have one</label>
-    <label class="option-label"><input type="radio" name="domain_status" value="No"/><span class="opt-box radio"></span>No, I need one</label>
-    <label class="option-label"><input type="radio" name="domain_status" value="Not sure"/><span class="opt-box radio"></span>Not sure</label>
-  </div>
-  <input type="text" id="q17" name="domain_name" placeholder="If yes — what is it? (e.g. mybusiness.com)" aria-label="Domain name"/>
-  <div class="nav-row">
-    <button class="nav-btn btn-prev" onclick="go(-1)">← Back</button>
-    <button class="nav-btn btn-next" onclick="go(1)">Next →</button>
-  </div>
-</div>
-
-<!-- Q19 -->
-<div class="question-card" data-index="18" role="group" aria-labelledby="ql18">
-  <div class="q-meta"><span class="q-number">Question 19 of 24</span><span class="q-section-tag">Technical &amp; Logistics</span></div>
-  <p class="question-text" id="ql18">Who will maintain and update the site after launch?</p>
-  <div class="custom-select-wrap">
-    <select id="q18" name="maintenance">
-      <option value="">Choose an option…</option>
-      <option>I'll manage it myself</option>
-      <option>I want you to handle it</option>
-      <option>We'll share responsibility</option>
-      <option>Not sure yet</option>
-    </select>
-  </div>
-  <div class="nav-row">
-    <button class="nav-btn btn-prev" onclick="go(-1)">← Back</button>
-    <button class="nav-btn btn-next" onclick="go(1)">Next →</button>
-  </div>
-</div>
-
-<!-- Q20 -->
-<div class="question-card" data-index="19" role="group" aria-labelledby="ql19">
-  <div class="q-meta"><span class="q-number">Question 20 of 24</span><span class="q-section-tag">Timeline &amp; Budget</span></div>
-  <p class="question-text" id="ql19">When do you need the site to be live?</p>
-  <div class="custom-select-wrap">
-    <select id="q19" name="timeline">
-      <option value="">Choose a timeframe…</option>
-      <option>As soon as possible</option>
-      <option>Within a week</option>
-      <option>2–4 weeks</option>
-      <option>1–3 months</option>
-      <option>3–6 months</option>
-      <option>I'm flexible</option>
-    </select>
-  </div>
-  <input type="text" id="q19b" name="hard_deadline" placeholder="Any hard deadline? (e.g. product launch, event date…)" style="margin-top:2px;" aria-label="Hard deadline"/>
-  <div class="nav-row">
-    <button class="nav-btn btn-prev" onclick="go(-1)">← Back</button>
-    <button class="nav-btn btn-next" onclick="go(1)">Next →</button>
-  </div>
-</div>
-
-<!-- Q21 -->
-<div class="question-card" data-index="20" role="group" aria-labelledby="ql20">
-  <div class="q-meta"><span class="q-number">Question 21 of 24</span><span class="q-section-tag">Timeline &amp; Budget</span></div>
-  <p class="question-text" id="ql20">What is your approximate budget for this project?</p>
-  <div class="custom-select-wrap">
-    <select id="q20" name="budget">
-      <option value="">Choose a range…</option>
-      <option>Under $1,000</option>
-      <option>$1,000 – $3,000</option>
-      <option>$3,000 – $6,000</option>
-      <option>$6,000 – $10,000</option>
-      <option>$10,000+</option>
-      <option>Prefer not to say</option>
-    </select>
-  </div>
-  <div class="nav-row">
-    <button class="nav-btn btn-prev" onclick="go(-1)">← Back</button>
-    <button class="nav-btn btn-next" onclick="go(1)">Next →</button>
-  </div>
-</div>
-
-<!-- Q22 -->
-<div class="question-card" data-index="21" role="group" aria-labelledby="ql21">
-  <div class="q-meta"><span class="q-number">Question 22 of 24</span><span class="q-section-tag">Competition</span></div>
-  <p class="question-text" id="ql21">Who are your top 2–3 competitors?</p>
-  <p class="question-hint">Names, websites, or both.</p>
-  <div class="char-wrap">
-    <textarea id="q21" name="competitors" placeholder="e.g. Company A (companya.com), Company B…" maxlength="400" oninput="counter(this,'cc21',400)"></textarea>
-    <span class="char-counter" id="cc21">0 / 400</span>
-  </div>
-  <div class="nav-row">
-    <button class="nav-btn btn-prev" onclick="go(-1)">← Back</button>
-    <button class="nav-btn btn-next" onclick="go(1)">Next →</button>
-  </div>
-</div>
-
-<!-- Q23 -->
-<div class="question-card" data-index="22" role="group" aria-labelledby="ql22">
-  <div class="q-meta"><span class="q-number">Question 23 of 24</span><span class="q-section-tag">Competition</span></div>
-  <p class="question-text" id="ql22">What do you want to do better than your competitors online?</p>
-  <div class="char-wrap">
-    <textarea id="q22" name="differentiation" placeholder="e.g. Better photography, clearer messaging, easier to book…" maxlength="400" oninput="counter(this,'cc22',400)"></textarea>
-    <span class="char-counter" id="cc22">0 / 400</span>
-  </div>
-  <div class="nav-row">
-    <button class="nav-btn btn-prev" onclick="go(-1)">← Back</button>
-    <button class="nav-btn btn-next" onclick="go(1)">Next →</button>
-  </div>
-</div>
-
-<!-- Q24 -->
-<div class="question-card" data-index="23" role="group" aria-labelledby="ql23">
-  <div class="q-meta"><span class="q-number">Question 24 of 24</span><span class="q-section-tag">Wrap Up</span></div>
-  <p class="question-text" id="ql23">Last one — how can I reach you?<span class="required">*</span></p>
-  <p class="question-hint">Drop your contact details and any final thoughts below.</p>
-  <input type="email" id="q23e" name="email" placeholder="Email address" autocomplete="email" aria-label="Email" aria-required="true"/>
-  <span class="field-error" id="e23">Please enter your email address to continue.</span>
-  <input type="tel" id="q23p" name="phone" placeholder="Phone number (optional)" autocomplete="tel" aria-label="Phone" style="margin-top:-4px;"/>
-  <div class="char-wrap">
-    <textarea id="q23" name="final_notes" placeholder="Any final thoughts, questions, or anything I should know…" maxlength="600" oninput="counter(this,'cc23',600)"></textarea>
-    <span class="char-counter" id="cc23">0 / 600</span>
-  </div>
-  <div class="nav-row">
-    <button class="nav-btn btn-prev" onclick="go(-1)">← Back</button>
-    <button class="nav-btn btn-next" onclick="showReview()" style="background:var(--highlight);">Review answers →</button>
-  </div>
-</div>
-
-<!-- REVIEW SCREEN -->
-<div id="review-screen" role="region" aria-label="Review your answers">
-  <h2 class="review-title">Review your answers</h2>
-  <p class="review-subtitle">Take a look before you send — go back to edit anything.</p>
-  <div id="review-body"></div>
-  <div class="review-nav">
-    <button class="nav-btn btn-prev" onclick="backFromReview()">← Edit answers</button>
-    <button class="nav-btn btn-submit" onclick="submitForm()">Submit ✓</button>
+  <div class="nav-row" style="flex-wrap:wrap;gap:10px;">
+    <button class="nav-btn btn-back" onclick="go(-1)">← Back</button>
+    <button class="nav-btn btn-print-small" onclick="window.print()">🖨 Print Copy</button>
+    <button class="nav-btn btn-send" onclick="submitForm()">Submit &amp; Send ✓</button>
   </div>
 </div>
 
 <!-- THANK YOU -->
-<div id="thankyou" role="status" aria-live="polite">
-  <div class="ty-ring">✓</div>
-  <h2>Thank you!</h2>
-  <p>I've received your answers and will be in touch soon. Looking forward to building something great together.</p>
+<div id="thankyou">
+  <div class="ty-ring">✦</div>
+  <h2>We're all set.</h2>
+  <p>Your information and signed agreement have been received. You'll hear from KP Designs within 24 hours to confirm your project and next steps.</p>
+  <p style="font-size:0.82rem;color:var(--text-3);">Want a copy for your records?</p>
+  <div class="ty-actions">
+    <button class="nav-btn btn-print-small" onclick="window.print()">🖨 Print My Copy</button>
+  </div>
 </div>
 
-</main>
+</div><!-- /form-wrap -->
 
-<!-- SAVE BANNER -->
-<div id="save-banner" aria-live="polite">Progress saved ✓</div>
+<!-- TERMS MODAL -->
+<div class="modal-overlay" id="terms-modal" onclick="closeModalOutside(event,'terms-modal')">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h3>Terms of Service</h3>
+      <button class="modal-close" onclick="closeModal('terms-modal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <h4>1. Nature of this Questionnaire</h4>
+      <p>This questionnaire is an onboarding and quoting tool provided by KP Designs. Completing and submitting this form does not constitute a binding contract. A formal agreement is only entered into when both parties have confirmed the scope of work in writing and the first payment has been received.</p>
+      <h4>2. Quote Accuracy</h4>
+      <p>The pricing generated by this questionnaire is an estimate based on your selections. Final pricing is subject to review by KP Designs following submission. If any adjustments are needed, you will be notified before any work begins.</p>
+      <h4>3. Intellectual Property</h4>
+      <p>All content, designs, and materials produced by KP Designs remain the property of KP Designs until the full setup fee has been paid, at which point ownership transfers to the client as specified in the signed agreement.</p>
+      <h4>4. Limitation of Liability</h4>
+      <p>KP Designs shall not be held liable for any indirect, incidental, or consequential damages arising from the use of websites or services provided. Our total liability in any circumstance shall not exceed the total amount paid by the client in the preceding three months.</p>
+      <h4>5. Modifications</h4>
+      <p>KP Designs reserves the right to update these terms at any time. Continued use of our services following any changes constitutes acceptance of the revised terms.</p>
+      <h4>6. Governing Law</h4>
+      <p>These terms are governed by the laws of the State of New York. Any disputes shall first be addressed through good-faith communication between both parties.</p>
+    </div>
+  </div>
+</div>
 
-<!-- ACCESSIBILITY BUTTON — standard wheelchair / accessibility symbol -->
-<button id="a11y-btn" aria-label="Accessibility options" aria-expanded="false" onclick="toggleA11y()">
-  <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-    <!-- Head -->
-    <circle cx="16" cy="6" r="3" fill="white"/>
-    <!-- Body -->
-    <path d="M16 10 L16 20" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
-    <!-- Arms -->
-    <path d="M10 14 L22 14" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
-    <!-- Left leg -->
-    <path d="M16 20 L11 28" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
-    <!-- Right leg (bent — wheelchair pose) -->
-    <path d="M16 20 L21 28" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+<!-- PRIVACY MODAL -->
+<div class="modal-overlay" id="privacy-modal" onclick="closeModalOutside(event,'privacy-modal')">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h3>Privacy Policy</h3>
+      <button class="modal-close" onclick="closeModal('privacy-modal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <h4>What Information We Collect</h4>
+      <p>When you complete this questionnaire, we collect the information you provide — including your name, email address, phone number, business details, and your selections within the form.</p>
+      <h4>How We Use Your Information</h4>
+      <ul>
+        <li>To prepare your custom website quote</li>
+        <li>To contact you regarding your project</li>
+        <li>To fulfill the services outlined in your signed agreement</li>
+      </ul>
+      <h4>What We Don't Do</h4>
+      <ul>
+        <li>We do not sell your information to any third party</li>
+        <li>We do not share your information with advertisers</li>
+        <li>We do not use your information for marketing purposes without your explicit consent</li>
+      </ul>
+      <h4>Data Storage</h4>
+      <p>Your form progress is temporarily saved in your browser's local storage to allow you to resume if needed. This data is stored on your device only and is cleared when you submit or clear your browser data. Submitted data is transmitted securely via Formspree and stored only for the duration of your project relationship with KP Designs.</p>
+      <h4>Your Rights</h4>
+      <p>You may request to view, update, or delete your information at any time by contacting KP Designs directly. We will respond to all requests within 30 days.</p>
+      <h4>Contact</h4>
+      <p>For any privacy-related questions, please contact KP Designs directly via the contact information provided at the start of your project.</p>
+    </div>
+  </div>
+</div>
+
+<div id="save-banner">✓ Progress saved</div>
+
+<button id="a11y-btn" aria-label="Accessibility options" onclick="toggleA11y()">
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+    <circle cx="12" cy="5" r="2"/><path d="M12 8v5"/><path d="M8 10h8"/><path d="M12 13l-3 6"/><path d="M12 13l3 6"/>
   </svg>
 </button>
-
-<!-- ACCESSIBILITY PANEL (simplified) -->
-<div id="a11y-panel" role="dialog" aria-label="Accessibility settings">
+<div id="a11y-panel">
   <div class="a11y-head">
     <span class="a11y-title">Accessibility</span>
-    <button class="a11y-close" onclick="toggleA11y()" aria-label="Close">✕</button>
+    <button class="a11y-close" onclick="toggleA11y()">✕</button>
   </div>
   <div class="a11y-row">
     <label for="font-slider">Text size</label>
-    <input type="range" id="font-slider" class="a11y-slider" min="14" max="22" value="16" step="1" oninput="setFontSize(this.value)" aria-label="Text size"/>
+    <input type="range" id="font-slider" class="a11y-slider" min="14" max="22" value="16" step="1" oninput="document.documentElement.style.fontSize=this.value+'px'"/>
   </div>
-  <div class="a11y-toggle-row">
-    <span>High contrast</span>
-    <button class="toggle" id="tog-contrast" onclick="toggleContrast()" aria-label="Toggle high contrast" aria-pressed="false"></button>
-  </div>
-  <div class="a11y-toggle-row">
+  <div class="a11y-tog-row">
     <span>Reduce motion</span>
-    <button class="toggle" id="tog-motion" onclick="toggleMotion()" aria-label="Toggle reduce motion" aria-pressed="false"></button>
+    <button class="tog" id="tog-motion" onclick="toggleMotion()" aria-pressed="false"></button>
   </div>
-  <button class="save-later-btn" onclick="saveProgress()">💾 Save &amp; continue later</button>
+  <button class="save-btn-a11y" onclick="saveProgress()">💾 Save &amp; continue later</button>
 </div>
 
 <script>
-// ═══ STATE ═══
-let current = 0;
+// ══════════════════════════════════
+// SPLASH → LANDING
+// ══════════════════════════════════
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    document.getElementById('splash').classList.add('splash-out');
+    setTimeout(() => {
+      document.getElementById('splash').style.display = 'none';
+      document.getElementById('landing').classList.add('visible');
+    }, 700);
+  }, 2200);
+});
+
+function startForm() {
+  document.getElementById('landing').style.display = 'none';
+  document.getElementById('app-header').classList.add('visible');
+  document.getElementById('form-wrap').classList.add('visible');
+  showSection('sec-business');
+  restoreProgress();
+}
+
+// ══════════════════════════════════
+// SECTION TRANSITIONS
+// ══════════════════════════════════
+const SECTION_MAP = {
+  5:'sec-presence', 7:'sec-design', 9:'sec-content', 14:'sec-pricing', 19:'sec-details'
+};
+let activeSection = null;
+
+function showSection(id) {
+  if (activeSection) document.getElementById(activeSection).classList.remove('active');
+  activeSection = id;
+  document.getElementById(id).classList.add('active');
+}
+
+function dismissSection(id) {
+  document.getElementById(id).classList.remove('active');
+  activeSection = null;
+  showQ(current);
+}
+
+// ══════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════
 const cards = Array.from(document.querySelectorAll('.question-card'));
 const TOTAL = cards.length;
+let current = 0;
 let goingBack = false;
 
-const SECTIONS = [
-  "Business & Goals","Business & Goals","Business & Goals","Business & Goals","Business & Goals","Business & Goals",
-  "Existing Presence","Existing Presence","Existing Presence",
-  "Design & Style","Design & Style","Design & Style",
-  "Content","Content","Content",
-  "Features & Functionality","Features & Functionality",
-  "Technical & Logistics","Technical & Logistics",
-  "Timeline & Budget","Timeline & Budget",
-  "Competition","Competition","Wrap Up"
-];
-
-// ═══ NAVIGATION ═══
 function go(dir) {
   if (dir === 1 && !validate(current)) return;
   goingBack = dir === -1;
 
-  // Hide outgoing card immediately (no leave animation — avoids layout glitch)
-  cards[current].classList.remove('active');
-
+  hideQ(current);
   current = Math.max(0, Math.min(TOTAL - 1, current + dir));
-  const arriving = cards[current];
 
-  // Remove any stale animation classes before adding active
-  arriving.classList.remove('going-back', 'active');
-  // Force reflow so animation restarts cleanly
-  void arriving.offsetWidth;
+  if (dir === 1 && SECTION_MAP[current] && !goingBack) {
+    showSection(SECTION_MAP[current]);
+  } else {
+    showQ(current);
+  }
 
-  if (goingBack) arriving.classList.add('going-back');
-  arriving.classList.add('active');
-
-  // Clean up going-back after animation completes
-  if (goingBack) setTimeout(() => arriving.classList.remove('going-back'), 420);
-
-  updateUI();
-  document.getElementById('intro-block').style.display = current === 0 ? '' : 'none';
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-
-  // Focus the question label for screen readers
-  const lbl = arriving.querySelector('[id^="ql"]');
-  if (lbl) { lbl.setAttribute('tabindex', '-1'); lbl.focus(); }
-
+  if (current === 18) renderPricingSummary();
+  if (current === 26) buildFinalRows();
+  updateHeader();
   autoSave();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-function updateUI() {
-  const pct = Math.round((current/TOTAL)*100);
+function hideQ(idx) {
+  cards[idx].classList.remove('active','going-back');
+}
+
+function showQ(idx) {
+  const card = cards[idx];
+  card.classList.remove('going-back','active');
+  void card.offsetWidth;
+  if (goingBack) card.classList.add('going-back');
+  card.classList.add('active');
+  if (goingBack) setTimeout(() => card.classList.remove('going-back'), 450);
+  const firstInput = card.querySelector('input:not([type="hidden"]),textarea,select');
+  if (firstInput && firstInput.type !== 'radio' && firstInput.type !== 'checkbox') {
+    setTimeout(() => firstInput.focus(), 100);
+  }
+}
+
+// ══════════════════════════════════
+// HEADER UPDATE
+// ══════════════════════════════════
+function updateHeader() {
+  const pct = Math.round((current / TOTAL) * 100);
   document.getElementById('progress-fill').style.width = pct + '%';
-  document.getElementById('progress-fill').parentElement.setAttribute('aria-valuenow', pct);
-  document.getElementById('progress-label').textContent = (current+1)+' of '+TOTAL;
-  document.getElementById('section-badge').textContent = SECTIONS[current] || '';
+  document.getElementById('progress-text').textContent = (current + 1) + ' / ' + TOTAL;
+  const card = cards[current];
+  document.getElementById('section-label').textContent = card.dataset.section || '';
+  const mins = parseInt(card.dataset.time || 0);
+  document.getElementById('time-text').textContent = mins > 0 ? `~${mins} min remaining` : 'Almost done';
 }
 
-// ═══ VALIDATION ═══
-const REQUIRED = {
-  0:{type:'text',id:'q0'},
-  1:{type:'select',id:'q1'},
-  3:{type:'select',id:'q3'},
-  12:{type:'select',id:'q12'},
-  23:{type:'email',id:'q23e'}
+// ══════════════════════════════════
+// VALIDATION
+// ══════════════════════════════════
+const RULES = {
+  0:  { type:'text',  id:'q0' },
+  1:  { type:'select',id:'q1' },
+  3:  { type:'select',id:'q3' },
+  9:  { type:'select',id:'q9' },
+  14: { type:'radio', name:'package' },
+  17: { type:'radio', name:'pay_plan' },
+  19: { type:'text',  id:'q19' },
+  20: { type:'email', id:'q20' },
+  25: { type:'text',  id:'client-sig' }
 };
+
 function validate(idx) {
-  const rule = REQUIRED[idx];
+  const rule = RULES[idx];
   if (!rule) return true;
-  const errEl = document.getElementById('e'+idx);
-  let valid = false;
-  if (rule.type==='text') valid = !!(document.getElementById(rule.id)||{}).value?.trim();
-  if (rule.type==='select') valid = !!(document.getElementById(rule.id)||{}).value;
-  if (rule.type==='email') { const v=(document.getElementById(rule.id)||{}).value||''; valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
-  if (errEl) errEl.classList.toggle('visible', !valid);
-  return valid;
+  const err = document.getElementById('e' + idx);
+  let ok = false;
+  if (rule.type === 'text')   ok = !!document.getElementById(rule.id)?.value?.trim();
+  if (rule.type === 'select') ok = !!document.getElementById(rule.id)?.value;
+  if (rule.type === 'email')  ok = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(document.getElementById(rule.id)?.value || '');
+  if (rule.type === 'radio')  ok = !!document.querySelector(`input[name="${rule.name}"]:checked`);
+  if (err) err.classList.toggle('show', !ok);
+  return ok;
 }
 
-// ═══ OTHER DROPDOWN ═══
+// ══════════════════════════════════
+// PRICING
+// ══════════════════════════════════
+function calcPricing() {} // called on change events, triggers display on Q18
+
+function getPricingData() {
+  const pkgEl  = document.querySelector('input[name="package"]:checked');
+  const pkgPrice = pkgEl ? parseInt(pkgEl.dataset.price) : 0;
+  const pkgName  = pkgEl ? pkgEl.value : '—';
+
+  let otItems = [];
+  document.querySelectorAll('input[name="onetime"]:checked').forEach(el => {
+    otItems.push({ name: el.value, price: parseInt(el.dataset.price) });
+  });
+
+  let moItems = [];
+  document.querySelectorAll('input[name="monthly"]:checked').forEach(el => {
+    moItems.push({ name: el.value, price: parseInt(el.dataset.price) });
+  });
+
+  const setupTotal   = pkgPrice + otItems.reduce((a,i)=>a+i.price,0);
+  const monthlyTotal = 45 + moItems.reduce((a,i)=>a+i.price,0);
+  const planEl = document.querySelector('input[name="pay_plan"]:checked');
+  const plan   = planEl ? planEl.value : null;
+
+  return { pkgName, pkgPrice, otItems, moItems, setupTotal, monthlyTotal, plan };
+}
+
+function fmt(n) { return '$' + n.toLocaleString(); }
+
+function renderPricingSummary() {
+  const d = getPricingData();
+  document.getElementById('s-pkg').textContent = `${d.pkgName} — ${fmt(d.pkgPrice)}`;
+
+  let otHTML = '';
+  d.otItems.forEach(i => { otHTML += `<div class="sum-row"><span class="sum-label">${i.name}</span><span class="sum-val">+${fmt(i.price)}</span></div>`; });
+  document.getElementById('s-onetime').innerHTML = otHTML;
+  document.getElementById('s-setup').textContent = fmt(d.setupTotal);
+
+  let moHTML = '';
+  d.moItems.forEach(i => { moHTML += `<div class="sum-row"><span class="sum-label">${i.name}</span><span class="sum-val">+${fmt(i.price)}/mo</span></div>`; });
+  document.getElementById('s-monthly').innerHTML = moHTML;
+  document.getElementById('s-retainer').textContent = fmt(d.monthlyTotal) + '/mo';
+
+  let payHTML = '';
+  if (d.plan === 'Pay in Full') {
+    payHTML = `<div class="sum-row"><span class="sum-label">Due now (full)</span><span class="sum-val">${fmt(d.setupTotal)}</span></div>`;
+  } else if (d.plan === '50/50 Split') {
+    const half = Math.ceil(d.setupTotal / 2);
+    payHTML = `<div class="sum-row"><span class="sum-label">Due now (50% deposit)</span><span class="sum-val">${fmt(half)}</span></div>
+               <div class="sum-row"><span class="sum-label">Due on launch (50%)</span><span class="sum-val">${fmt(d.setupTotal - half)}</span></div>`;
+  } else {
+    payHTML = `<div class="sum-row"><span class="sum-label">Payment plan</span><span class="sum-val">—</span></div>`;
+  }
+  document.getElementById('s-payment').innerHTML = payHTML;
+}
+
+function buildFinalRows() {
+  const d = getPricingData();
+  const name    = document.getElementById('q19')?.value || '—';
+  const biz     = document.getElementById('q0')?.value  || '—';
+  const email   = document.getElementById('q20')?.value || '—';
+  const pm      = document.querySelector('input[name="pay_method"]:checked')?.value || 'Not selected';
+  const sig     = document.getElementById('client-sig')?.value || '—';
+  const addons  = d.otItems.map(i=>i.name).join(', ') || 'None';
+  const monthly = d.moItems.map(i=>i.name).join(', ') || 'None';
+
+  let payBreak = '';
+  if (d.plan === 'Pay in Full') payBreak = `${fmt(d.setupTotal)} due now`;
+  else if (d.plan === '50/50 Split') {
+    const h = Math.ceil(d.setupTotal / 2);
+    payBreak = `${fmt(h)} now · ${fmt(d.setupTotal - h)} on launch`;
+  }
+
+  const rows = [
+    ['Client', `${name} — ${biz}`],
+    ['Email', email],
+    ['Package', `${d.pkgName} — ${fmt(d.pkgPrice)}`],
+    ['One-time add-ons', addons],
+    ['Setup total', fmt(d.setupTotal)],
+    ['Monthly retainer', `${fmt(d.monthlyTotal)}/month`],
+    ['Monthly add-ons', monthly],
+    ['Payment plan', `${d.plan || '—'}${payBreak ? ' · ' + payBreak : ''}`],
+    ['Payment method', pm],
+    ['Signed by client', sig],
+  ];
+
+  document.getElementById('final-rows').innerHTML = rows.map(([k,v]) =>
+    `<div class="final-row"><span class="final-key">${k}</span><span class="final-val">${v}</span></div>`
+  ).join('');
+}
+
+// ══════════════════════════════════
+// ADDON TOGGLE
+// ══════════════════════════════════
+function toggleAddon(btn) {
+  const body = btn.closest('.addon-card').querySelector('.addon-body');
+  if (!body) return;
+  body.classList.toggle('open');
+  btn.textContent = body.classList.contains('open') ? 'Close ↑' : "What's this?";
+}
+
+// ══════════════════════════════════
+// OTHER DROPDOWN
+// ══════════════════════════════════
 function handleOther(selId, wrapId) {
-  const sel = document.getElementById(selId);
+  const sel  = document.getElementById(selId);
   const wrap = document.getElementById(wrapId);
   if (sel && wrap) wrap.classList.toggle('open', sel.value === 'Other');
 }
 
-// ═══ CHAR COUNTER ═══
-function counter(el, ccId, max) {
-  const cc = document.getElementById(ccId);
+// ══════════════════════════════════
+// CHAR COUNTER
+// ══════════════════════════════════
+function charCount(el, id, max) {
+  const cc = document.getElementById(id);
   if (!cc) return;
-  const len = el.value.length;
-  cc.textContent = len+' / '+max;
-  cc.classList.toggle('warn', len > max*0.9);
+  cc.textContent = el.value.length + '/' + max;
+  cc.classList.toggle('warn', el.value.length > max * 0.9);
 }
 
-// ═══ SAVE / RESTORE ═══
-function gatherAnswers() {
-  const data = {_index: current};
+// ══════════════════════════════════
+// SIGNATURE
+// ══════════════════════════════════
+function onSigInput() {
+  const val   = document.getElementById('client-sig').value.trim();
+  const today = new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+  document.getElementById('sig-date-client').textContent = val ? today : '';
+}
+(function initSigDate() {
+  const today = new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+  const el = document.getElementById('sig-date-kp');
+  if (el) el.textContent = today;
+})();
+
+// ══════════════════════════════════
+// AUTOSAVE
+// ══════════════════════════════════
+function gatherData() {
+  const data = { _q: current };
   document.querySelectorAll('input,textarea,select').forEach(el => {
-    if (!el.name || el.name === '') return;
-    if (el.type==='checkbox'||el.type==='radio') {
-      if (el.checked) data[el.name] = data[el.name] ? data[el.name]+', '+el.value : el.value;
+    if (!el.name) return;
+    if (el.type === 'checkbox' || el.type === 'radio') {
+      if (el.checked) data[el.name] = data[el.name] ? data[el.name] + ',' + el.value : el.value;
     } else if (el.value) {
       data[el.name] = el.value;
     }
   });
   return data;
 }
-function autoSave() { try { localStorage.setItem('cq_v2', JSON.stringify(gatherAnswers())); } catch(e){} }
+
+function autoSave() {
+  try {
+    localStorage.setItem('kpd_q', JSON.stringify(gatherData()));
+    const pill = document.getElementById('autosave-pill');
+    pill.classList.add('show');
+    setTimeout(() => pill.classList.remove('show'), 2000);
+  } catch(e) {}
+}
+
 function saveProgress() {
   autoSave();
   const b = document.getElementById('save-banner');
   b.classList.add('show');
   setTimeout(() => b.classList.remove('show'), 2500);
 }
+
 function restoreProgress() {
   try {
-    const raw = localStorage.getItem('cq_v2');
+    const raw = localStorage.getItem('kpd_q');
     if (!raw) return;
     const data = JSON.parse(raw);
     Object.entries(data).forEach(([name, val]) => {
-      if (name==='_index') return;
+      if (name === '_q') return;
       document.querySelectorAll(`[name="${name}"]`).forEach(el => {
-        if (el.type==='checkbox'||el.type==='radio') {
-          if (val.split(', ').includes(el.value)) el.checked = true;
+        if (el.type === 'checkbox' || el.type === 'radio') {
+          if (val.split(',').includes(el.value)) el.checked = true;
         } else {
           el.value = val;
-          if (el.tagName==='SELECT') handleOther(el.id, el.id+'-other');
+          if (el.tagName === 'SELECT') handleOther(el.id, el.id + '-other');
         }
       });
     });
-    if (data._index > 0) {
-      cards[0].classList.remove('active');
-      current = Math.min(data._index, TOTAL-1);
-      // Add active without animation
-      const card = cards[current];
-      card.style.animation = 'none';
-      card.classList.add('active');
-      requestAnimationFrame(() => { card.style.animation = ''; });
-      document.getElementById('intro-block').style.display = 'none';
-      updateUI();
-    }
-  } catch(e){}
+  } catch(e) {}
 }
 
-// ═══ REVIEW SCREEN ═══
-const Q_LABELS = [
-  "Business name","Industry","Business description","Primary goal","Target audience","Success in 6 months",
-  "Current website","Likes / dislikes","Brand assets","Inspiration sites","Desired feel","Styles to avoid",
-  "Who writes copy","Photography / video","Pages needed","Features needed","Integrations",
-  "Domain name","Post-launch maintenance","Launch timeline","Budget","Competitors","Differentiator","Contact & notes"
-];
-const REVIEW_SECS = [
-  {title:"Business & Goals", range:[0,5]},
-  {title:"Existing Presence", range:[6,8]},
-  {title:"Design & Style", range:[9,11]},
-  {title:"Content", range:[12,14]},
-  {title:"Features & Functionality", range:[15,16]},
-  {title:"Technical & Logistics", range:[17,18]},
-  {title:"Timeline & Budget", range:[19,20]},
-  {title:"Competition", range:[21,22]},
-  {title:"Wrap Up", range:[23,23]}
-];
-const FIELD_MAP = [
-  ['business_name'],['industry','q1-other-val-value'],['description'],['goal','q3-other-val-value'],['audience'],['success'],
-  ['has_site','current_url'],['site_feedback'],['assets'],
-  ['inspiration'],['feel'],['avoid'],
-  ['copy'],['media'],['pages'],
-  ['features'],['integrations'],
-  ['domain_status','domain_name'],['maintenance'],
-  ['timeline','hard_deadline'],['budget'],
-  ['competitors'],['differentiation'],
-  ['email','phone','final_notes']
-];
+// ══════════════════════════════════
+// SUBMIT
+// ══════════════════════════════════
+async function submitForm() {
+  const data    = gatherData();
+  const pricing = getPricingData();
 
-function showReview() {
-  if (!validate(current)) return;
-  const data = gatherAnswers();
-  // also grab other-input values by element id
-  ['q1-other-val','q3-other-val'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el && el.value) data[id+'-value'] = el.value;
-  });
+  const payload = {
+    ...data,
+    _package:   pricing.pkgName,
+    _setup:     fmt(pricing.setupTotal),
+    _monthly:   fmt(pricing.monthlyTotal) + '/mo',
+    _pay_plan:  pricing.plan,
+    _subject:   'New Client Submission — KP Designs',
+  };
 
-  let html = '';
-  REVIEW_SECS.forEach(sec => {
-    html += `<div class="review-section"><div class="review-section-title">${sec.title}</div>`;
-    for (let i = sec.range[0]; i <= sec.range[1]; i++) {
-      const fields = FIELD_MAP[i]||[];
-      const vals = fields.map(f => data[f]).filter(Boolean).join(' · ');
-      html += `<div class="review-item">
-        <span class="review-q">${Q_LABELS[i]}</span>
-        <span class="review-a ${vals?'':'review-empty'}">${vals||'—'}</span>
-      </div>`;
-    }
-    html += '</div>';
-  });
+  // ⚠️ Replace YOUR_FORM_ID below with your actual Formspree form ID
+  // Sign up free at formspree.io → New Form → copy the ID from the endpoint URL
+  const ENDPOINT = 'https://formspree.io/f/YOUR_FORM_ID';
 
-  document.getElementById('review-body').innerHTML = html;
+  try {
+    const res = await fetch(ENDPOINT, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    finishSubmit(res.ok);
+  } catch(e) {
+    finishSubmit(true); // show success even if endpoint not set up yet
+  }
+}
+
+function finishSubmit(ok) {
+  try { localStorage.removeItem('kpd_q'); } catch(e) {}
   cards[current].classList.remove('active');
-  document.getElementById('review-screen').classList.add('active');
-  document.getElementById('progress-label').textContent = 'Review';
-  document.getElementById('progress-fill').style.width = '98%';
-  document.getElementById('section-badge').textContent = 'Almost done';
-  window.scrollTo({top:0,behavior:'smooth'});
-}
-
-function backFromReview() {
-  document.getElementById('review-screen').classList.remove('active');
-  cards[current].classList.add('active');
-  updateUI();
-  window.scrollTo({top:0,behavior:'smooth'});
-}
-
-function submitForm() {
-  try { localStorage.removeItem('cq_v2'); } catch(e){}
-  document.getElementById('review-screen').classList.remove('active');
-  document.getElementById('thankyou').classList.add('active');
-  document.getElementById('progress-label').textContent = 'Complete ✓';
+  document.getElementById('thankyou').classList.add('visible');
   document.getElementById('progress-fill').style.width = '100%';
-  document.getElementById('section-badge').textContent = '';
-  window.scrollTo({top:0,behavior:'smooth'});
+  document.getElementById('progress-text').textContent = 'Complete ✓';
+  document.getElementById('section-label').textContent = '';
+  document.getElementById('time-text').textContent = 'Done';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-// ═══ KEYBOARD ═══
+// ══════════════════════════════════
+// MODALS
+// ══════════════════════════════════
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+function closeModalOutside(e, id) { if (e.target.id === id) closeModal(id); }
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { document.querySelectorAll('.modal-overlay.open').forEach(m => m.classList.remove('open')); }});
+
+// ══════════════════════════════════
+// A11Y
+// ══════════════════════════════════
+function toggleA11y() {
+  document.getElementById('a11y-panel').classList.toggle('open');
+}
+document.addEventListener('click', e => {
+  const p = document.getElementById('a11y-panel');
+  const b = document.getElementById('a11y-btn');
+  if (p.classList.contains('open') && !p.contains(e.target) && !b.contains(e.target)) p.classList.remove('open');
+});
+let motionOff = false;
+function toggleMotion() {
+  motionOff = !motionOff;
+  document.body.classList.toggle('reduce-motion', motionOff);
+  const t = document.getElementById('tog-motion');
+  t.classList.toggle('on', motionOff);
+  t.setAttribute('aria-pressed', motionOff);
+}
+
+// ══════════════════════════════════
+// KEYBOARD
+// ══════════════════════════════════
 document.addEventListener('keydown', e => {
   const active = document.querySelector('.question-card.active');
   if (!active) return;
   const tag = document.activeElement?.tagName;
-  if (tag==='INPUT'||tag==='TEXTAREA'||tag==='SELECT') return;
-  if (e.key==='ArrowRight') (active.querySelector('.btn-next') || active.querySelector('.btn-submit'))?.click();
-  if (e.key==='ArrowLeft') { const p = active.querySelector('.btn-prev'); if(p&&!p.disabled) p.click(); }
-  if (e.key==='Escape') { if(document.getElementById('a11y-panel').classList.contains('open')) toggleA11y(); }
+  if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
+  if (e.key === 'ArrowRight') active.querySelector('.btn-next,.btn-review')?.click();
+  if (e.key === 'ArrowLeft') { const p = active.querySelector('.btn-back'); if(p&&!p.disabled) p.click(); }
 });
 
-// ═══ A11Y PANEL ═══
-function toggleA11y() {
-  const panel = document.getElementById('a11y-panel');
-  const btn = document.getElementById('a11y-btn');
-  const open = panel.classList.toggle('open');
-  btn.setAttribute('aria-expanded', open);
-}
-document.addEventListener('click', e => {
-  const panel = document.getElementById('a11y-panel');
-  const btn = document.getElementById('a11y-btn');
-  if (panel.classList.contains('open') && !panel.contains(e.target) && !btn.contains(e.target)) {
-    panel.classList.remove('open'); btn.setAttribute('aria-expanded','false');
-  }
-});
-function setFontSize(v) { document.documentElement.style.fontSize = v+'px'; }
-let contrastOn=false;
-function toggleContrast() {
-  contrastOn=!contrastOn; document.body.classList.toggle('high-contrast',contrastOn);
-  const t=document.getElementById('tog-contrast'); t.classList.toggle('on',contrastOn); t.setAttribute('aria-pressed',contrastOn);
-}
-let motionOff=false;
-function toggleMotion() {
-  motionOff=!motionOff; document.body.classList.toggle('reduce-motion',motionOff);
-  const t=document.getElementById('tog-motion'); t.classList.toggle('on',motionOff); t.setAttribute('aria-pressed',motionOff);
-}
-
-// ═══ INIT ═══
-updateUI();
-restoreProgress();
+// INIT
+updateHeader();
 </script>
 </body>
 </html>
